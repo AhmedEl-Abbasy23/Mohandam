@@ -210,6 +210,7 @@ class _ExploreViewState extends State<ExploreView> {
                                             Text(
                                               snapshot.data!.docs[index]
                                                   ['subtitle'],
+                                              maxLines: 2,
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.w300,
                                                 color: Colors.grey,

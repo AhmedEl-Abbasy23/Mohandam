@@ -125,7 +125,7 @@ class _SearchViewState extends State<SearchView> {
                               height: 240,
                               width: 164,
                               child: Image.asset(
-                                'assets/images/banner1.jpg',
+                                'assets/images/mohandam_logo.jpg',
                                 fit: BoxFit.cover,
                               ),
                             ),

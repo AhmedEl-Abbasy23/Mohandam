@@ -89,18 +89,9 @@ flutter:
     - assets/icons/logout_ic.svg
     - assets/icons/language_ic.svg
     - assets/icons/sell_product_ic.png
-    - assets/images/banner1.jpg
-    - assets/images/banner2.jpg
-    - assets/images/banner3.jpg
-    - assets/images/banner4.jpg
-    - assets/images/banner5.jpg
     - assets/images/mohandam_logo.jpg
     - assets/images/item1.jpg
-    - assets/json/jewelry.json
-    - assets/json/pottery.json
-    - assets/json/gifts.json
-    - assets/json/gift3.json
-    - assets/json/necklace-animation.json
+#    - assets/json/jewelry.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

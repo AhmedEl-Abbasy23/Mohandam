@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -41,12 +42,7 @@ class _SellProductViewState extends State<SellProductView> {
     return categories;
   }
 
-  List<XFile> _images = [];
-
-  // List<String>? _imagesBaseName = [];
-  final ImagePicker _picker = ImagePicker();
-  var _imageName,
-      _productTitle,
+  var _productTitle,
       _productSubtitle,
       _productCategory = 'Recommended',
       _productDescription,
@@ -55,28 +51,17 @@ class _SellProductViewState extends State<SellProductView> {
 
   String? _currentCategory;
 
+  final ImagePicker _picker = ImagePicker();
+  List<XFile> _images = [];
+
   _selectImages() async {
     final List<XFile>? _selectedImages = await _picker.pickMultiImage(
       imageQuality: 10,
     );
     if (_selectedImages!.isNotEmpty) {
-      var rand = Random().nextInt(100000);
       setState(() {
         _images = [];
         _images.addAll(_selectedImages);
-        // to get image-name
-        // _imageName = "$rand" + basename();
-        // _images -> contains list<XFile>, pass element inside it.
-        for (var element in _images) {
-          // _imageName = '$rand' + basename(element.path);
-          // todo: add all files paths inside imagesBaseName.
-          /*_imageName = '$rand' + basename(element.path);
-          // _imagesBaseName = [];
-          _imagesBaseName!.add(_imageName);
-          print('---------------------------------');
-          print(_imagesBaseName);
-          print('---------------------------------');*/
-        }
       });
       print("Image List Length: " + _images.length.toString());
     }
@@ -462,23 +447,36 @@ class _SellProductViewState extends State<SellProductView> {
       List<String> _imagesUrls = [];
       var rand = Random().nextInt(100000);
       if (_images.isNotEmpty) {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.INFO,
+                headerAnimationLoop: true,
+                animType: AnimType.BOTTOMSLIDE,
+                title: 'Uploading product now ...',
+                dismissOnBackKeyPress: false,
+                dismissOnTouchOutside: false)
+            .show()
+            .then((value) {
+          Navigator.of(context).pop();
+        });
         for (var imageFile in _images) {
           var reference = _productsStorage
               .ref('products/')
               .child('$rand' + basename(imageFile.path));
-          var uploadTask = reference.putFile(File(imageFile.path));
+          var uploadImages = reference.putFile(File(imageFile.path));
           print('---------------------------');
           print('$rand' + basename(imageFile.path) + ' is uploaded');
           print('---------------------------');
-          var downloadUrl = await uploadTask.whenComplete(() => {});
+          var downloadUrl = await uploadImages.whenComplete(() => {});
           await downloadUrl.ref.getDownloadURL().then((value) {
             _imagesUrls.add(value);
+
             print('---------------------------');
             print(_imagesUrls);
             print('---------------------------');
           });
         }
-        if(_imagesUrls.length == _images.length){
+        if (_imagesUrls.length == _images.length) {
           _productsData.add({
             'category': _currentCategory ?? _productCategory,
             'description': _productDescription,
@@ -486,7 +484,6 @@ class _SellProductViewState extends State<SellProductView> {
             'title': _productTitle,
             'subtitle': _productSubtitle,
             'quantity': _productQuantity,
-            // todo remove imgUrl if file == null.
             'images': _imagesUrls,
           }).then((value) async {
             // to upload seller information inside product.
@@ -508,6 +505,19 @@ class _SellProductViewState extends State<SellProductView> {
             Navigator.of(context).pop();
           }).catchError((error) => print("Failed to upload product: $error"));
         }
+      } else {
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.NO_HEADER,
+          headerAnimationLoop: true,
+          animType: AnimType.BOTTOMSLIDE,
+          title: 'Alert',
+          desc: 'Please add the product images',
+          buttonsTextStyle: const TextStyle(color: Colors.white),
+          btnOkColor: const Color(0xff096f77),
+          showCloseIcon: false,
+          btnOkOnPress: () {},
+        ).show();
       }
     }
   }

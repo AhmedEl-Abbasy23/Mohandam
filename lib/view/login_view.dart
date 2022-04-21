@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -207,9 +208,10 @@ class _LoginViewState extends State<LoginView> {
                           password: _passwordController.text,
                         )
                             .then((user) {
-                              print('---------------- email verified is: ---------------');
-                              print(user.user!.emailVerified);
-                              print('----------------  ---------------');
+                          print(
+                              '---------------- email verified is: ---------------');
+                          print(user.user!.emailVerified);
+                          print('----------------  ---------------');
                           if (user.user!.emailVerified) {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
@@ -255,6 +257,16 @@ class _LoginViewState extends State<LoginView> {
                         'imgUrl': '',
                         'shippingAddress': '',
                       });
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.NO_HEADER,
+                        headerAnimationLoop: true,
+                        animType: AnimType.BOTTOMSLIDE,
+                        title: 'Loading ...',
+                        dismissOnBackKeyPress: false,
+                        dismissOnTouchOutside: false,
+                        autoDismiss: true,
+                      ).show();
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -311,10 +323,20 @@ class _LoginViewState extends State<LoginView> {
                         'imgUrl': '',
                         'shippingAddress': '',
                       });
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.NO_HEADER,
+                        headerAnimationLoop: true,
+                        animType: AnimType.BOTTOMSLIDE,
+                        title: 'Loading ...',
+                        dismissOnBackKeyPress: false,
+                        dismissOnTouchOutside: false,
+                      ).show();
                       Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const MainView()));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MainView()),
+                      );
                       print(credential.user!.uid);
                     }).catchError((error) {
                       print(error.toString());
