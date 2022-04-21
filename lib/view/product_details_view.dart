@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:handmade_store/view/reusable_widgets/custom_button.dart';
@@ -7,13 +8,13 @@ class ProductDetailsView extends StatefulWidget {
   const ProductDetailsView({
     Key? key,
     required this.productId,
-    required this.productImage,
+    required this.productImages,
     required this.productTitle,
     required this.productDescription,
     required this.productPrice,
   }) : super(key: key);
   final String productId;
-  final String productImage;
+  final List productImages;
   final String productTitle;
   final String productDescription;
   final String productPrice;
@@ -39,15 +40,43 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                 Stack(
                   alignment: Alignment.centerLeft,
                   children: [
-                    // image
+                    // product images section
                     Hero(
                       tag: widget.productId,
-                      child: SizedBox(
-                        height: 350,
-                        width: double.infinity,
-                        child: Image.network(
-                          widget.productImage,
-                          fit: BoxFit.cover,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 50.0),
+                        height: 280.0,
+                        child: CarouselSlider.builder(
+                          itemCount: widget.productImages.length,
+                          itemBuilder: (context, index, _) {
+                            return Card(
+                              elevation: 5.0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                side: const BorderSide(
+                                    color: Colors.white, width: 1.5),
+                              ),
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: widget.productImages.isNotEmpty
+                                      ? Image.network(
+                                    widget.productImages[index],
+                                    fit: BoxFit.cover,
+                                  )
+                                      : Image.asset(
+                                    'assets/images/mohandam_logo.jpg',
+                                    fit: BoxFit.cover,
+                                  )),
+                            );
+                          },
+                          options: CarouselOptions(
+                            height: 250,
+                            autoPlay: true,
+                            enableInfiniteScroll: true,
+                            enlargeCenterPage: true,
+                            autoPlayAnimationDuration:
+                            const Duration(milliseconds: 5000),
+                          ),
                         ),
                       ),
                     ),
@@ -83,14 +112,14 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                   ],
                 ),
                 Container(
-                  height: 510.0,
+                  height: 530.0,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Theme(
                     data: Theme.of(context).copyWith(
                         colorScheme: ColorScheme.fromSwatch()
                             .copyWith(secondary: const Color(0xff096f77))),
                     child: ListView(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      padding: const EdgeInsets.only(top: 0.0,bottom: 10.0),
                       children: [
                         CustomText(
                           text: widget.productTitle,

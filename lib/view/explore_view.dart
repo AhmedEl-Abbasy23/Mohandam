@@ -131,7 +131,7 @@ class _ExploreViewState extends State<ExploreView> {
                 }),
             // recommended section
             StreamBuilder<QuerySnapshot?>(
-              stream: _productsData.where('quantity', isNotEqualTo: '0').snapshots(), // todo order by.
+              stream: _productsData.where('category', isEqualTo: 'Recommended').snapshots(), // todo order by.
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot?> snapshot) {
                 if (snapshot.hasData) {
@@ -164,8 +164,7 @@ class _ExploreViewState extends State<ExploreView> {
                                   MaterialPageRoute(
                                     builder: (context) => ProductDetailsView(
                                       productId: snapshot.data!.docs[index].id,
-                                      productImage: snapshot.data!.docs[index]
-                                          ['imgUrl'],
+                                      productImages: snapshot.data!.docs[index]['images'],
                                       productDescription: snapshot
                                           .data!.docs[index]['description'],
                                       productPrice: snapshot.data!.docs[index]
@@ -186,7 +185,7 @@ class _ExploreViewState extends State<ExploreView> {
                                     children: [
                                       Expanded(
                                         child: Image.network(
-                                          snapshot.data!.docs[index]['imgUrl'],
+                                          snapshot.data!.docs[index]['images'][0],
                                           fit: BoxFit.cover,
                                           width: double.infinity,
                                           height: double.infinity,

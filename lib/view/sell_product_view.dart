@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -17,21 +18,20 @@ class SellProductView extends StatefulWidget {
 class _SellProductViewState extends State<SellProductView> {
   final _formKey = GlobalKey<FormState>();
   final _productsData = FirebaseFirestore.instance.collection('products');
+  final _productsStorage = FirebaseStorage.instance;
   final _currentUser = FirebaseAuth.instance.currentUser!;
 
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> categories = const [
       DropdownMenuItem(child: Text("Accessories"), value: "Accessories"),
       DropdownMenuItem(child: Text("Jewelery"), value: "Jewelery"),
-      DropdownMenuItem(
-          child: Text("Antiques"), value: "Antiques"),
+      DropdownMenuItem(child: Text("Antiques"), value: "Antiques"),
       DropdownMenuItem(child: Text("Glass"), value: "Glass"),
       DropdownMenuItem(child: Text("Pottery"), value: "Pottery"),
       DropdownMenuItem(child: Text("Crochet"), value: "Crochet"),
       DropdownMenuItem(child: Text("Embroidery"), value: "Embroidery"),
       DropdownMenuItem(child: Text("Decorations"), value: "Decorations"),
-      DropdownMenuItem(
-          child: Text("Clay"), value: "Clay"),
+      DropdownMenuItem(child: Text("Clay"), value: "Clay"),
       DropdownMenuItem(child: Text("Paint Art"), value: "Paint Art"),
       DropdownMenuItem(child: Text("Leathers"), value: "Leathers"),
       DropdownMenuItem(child: Text("Macrames"), value: "Macrames"),
@@ -42,13 +42,13 @@ class _SellProductViewState extends State<SellProductView> {
   }
 
   List<XFile> _images = [];
-  List<String>? _imagesUrls = [];
+
+  // List<String>? _imagesBaseName = [];
   final ImagePicker _picker = ImagePicker();
-  File? _file;
   var _imageName,
       _productTitle,
       _productSubtitle,
-      _productCategory = 'recommended',
+      _productCategory = 'Recommended',
       _productDescription,
       _productPrice,
       _productQuantity;
@@ -69,15 +69,16 @@ class _SellProductViewState extends State<SellProductView> {
         // _images -> contains list<XFile>, pass element inside it.
         for (var element in _images) {
           // _imageName = '$rand' + basename(element.path);
-          // todo: add all files paths inside imagesFiles.
-          _imagesUrls = [];
-          _imagesUrls!.add('$rand' + basename(element.path));
+          // todo: add all files paths inside imagesBaseName.
+          /*_imageName = '$rand' + basename(element.path);
+          // _imagesBaseName = [];
+          _imagesBaseName!.add(_imageName);
           print('---------------------------------');
-          print(_imageName);
-          print('---------------------------------');
+          print(_imagesBaseName);
+          print('---------------------------------');*/
         }
       });
-      print("Image List Length:" + _images.length.toString());
+      print("Image List Length: " + _images.length.toString());
     }
   }
 
@@ -227,9 +228,9 @@ class _SellProductViewState extends State<SellProductView> {
                                         });
                                       },
                                       onSaved: (String? value) {
-                                          setState(() {
-                                            _currentCategory = value;
-                                          });
+                                        setState(() {
+                                          _currentCategory = value;
+                                        });
                                       },
                                       autovalidateMode: AutovalidateMode.always,
                                       /*validator: (String? value) {
@@ -457,49 +458,57 @@ class _SellProductViewState extends State<SellProductView> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       // edit task without update image.
-      if (_file == null) {
-        await _productsData.add({
-          'category': _currentCategory ?? _productCategory,
-          'description': _productDescription,
-          'price': _productPrice,
-          'title': _productTitle,
-          'subtitle': _productSubtitle,
-          'quantity': _productQuantity,
-          // todo remove imgUrl if file == null.
-          'imgUrl': 'https://images.unsplash.com/photo-1573227895226-86880bc6ce44?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
-        }).then((value) async{
-          // todo upload seller information inside product.
-          print(value.id);
-          var _userInfo = await FirebaseFirestore.instance.collection('users').doc(_currentUser.uid).get();
-          await _productsData.doc(value.id).collection('seller info').doc(_currentUser.uid).set({
-            'sellerName': _userInfo.get('name'),
-            'sellerImg': _userInfo.get('imgUrl'),
-            'sellerUid': _currentUser.uid,
+      // upload product images
+      List<String> _imagesUrls = [];
+      var rand = Random().nextInt(100000);
+      if (_images.isNotEmpty) {
+        for (var imageFile in _images) {
+          var reference = _productsStorage
+              .ref('products/')
+              .child('$rand' + basename(imageFile.path));
+          var uploadTask = reference.putFile(File(imageFile.path));
+          print('---------------------------');
+          print('$rand' + basename(imageFile.path) + ' is uploaded');
+          print('---------------------------');
+          var downloadUrl = await uploadTask.whenComplete(() => {});
+          await downloadUrl.ref.getDownloadURL().then((value) {
+            _imagesUrls.add(value);
+            print('---------------------------');
+            print(_imagesUrls);
+            print('---------------------------');
           });
-          Navigator.of(context).pop();
-          print("Product Uploaded");
-        }).catchError((error) => print("Failed to upload product: $error"));
-      }
-      /*else {
-        // delete current image
-        if (_currentImageUrl != '') {
-          // await _userStorage.refFromURL(_currentImageUrl).delete();
         }
-        // upload new image
-        // await _userStorage.ref('users/').child(_imageName).putFile(_file!);
-        var imgUrl =
-        // await _userStorage.ref('users/').child(_imageName).getDownloadURL();
-        print('image Url is : $imgUrl ------------');
-        await _usersData.doc(_currentUser!.uid).update({
-          'name': name,
-          'mobileNumber': mobileNumber,
-          'shippingAddress': shippingAddress,
-          'imgUrl': imgUrl,
-        }).then((value) {
-          Navigator.of(context).pop();
-          print("Profile updated");
-        }).catchError((error) => print("Failed to update profile: $error"));
-      }*/
+        if(_imagesUrls.length == _images.length){
+          _productsData.add({
+            'category': _currentCategory ?? _productCategory,
+            'description': _productDescription,
+            'price': _productPrice,
+            'title': _productTitle,
+            'subtitle': _productSubtitle,
+            'quantity': _productQuantity,
+            // todo remove imgUrl if file == null.
+            'images': _imagesUrls,
+          }).then((value) async {
+            // to upload seller information inside product.
+            print(value.id);
+            var _userInfo = await FirebaseFirestore.instance
+                .collection('users')
+                .doc(_currentUser.uid)
+                .get();
+            await _productsData
+                .doc(value.id)
+                .collection('seller info')
+                .doc(_currentUser.uid)
+                .set({
+              'sellerName': _userInfo.get('name'),
+              'sellerImg': _userInfo.get('imgUrl'),
+              'sellerUid': _currentUser.uid,
+            });
+            print("Product Uploaded");
+            Navigator.of(context).pop();
+          }).catchError((error) => print("Failed to upload product: $error"));
+        }
+      }
     }
   }
 }
