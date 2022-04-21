@@ -485,6 +485,8 @@ class _SellProductViewState extends State<SellProductView> {
             'subtitle': _productSubtitle,
             'quantity': _productQuantity,
             'images': _imagesUrls,
+            'inFavorite': false,
+            'ownProduct': true,
           }).then((value) async {
             // to upload seller information inside product.
             print(value.id);

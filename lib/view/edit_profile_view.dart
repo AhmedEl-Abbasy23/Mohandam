@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,8 +25,7 @@ class _EditProfileState extends State<EditProfile> {
   final _usersData = FirebaseFirestore.instance.collection('users');
   final _userStorage = FirebaseStorage.instance;
 
-  String noImage =
-      'https://st.depositphotos.com/2010753/1970/v/600/depositphotos_19705093-stock-illustration-hand-colorful-vector-design.jpg';
+  final String _appLogoUrl = 'https://firebasestorage.googleapis.com/v0/b/handmade-49991.appspot.com/o/mohandam_logo.jpg?alt=media&token=15f1d4be-0af1-47f1-b66f-a5b4d0ed903f';
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class _EditProfileState extends State<EditProfile> {
                         radius: 90.0,
                         backgroundImage: snapshot.data!.get('imgUrl') != ''
                             ? NetworkImage(snapshot.data!.get('imgUrl'))
-                            : NetworkImage(noImage),
+                            : NetworkImage(_appLogoUrl),
                       ),
                     ),
                     const SizedBox(height: 20.0),
@@ -262,12 +262,10 @@ class _EditProfileState extends State<EditProfile> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Flexible(
-            child: Text(
-              'Update picture',
-              style: TextStyle(fontSize: 16.0),
+          const Text(
+              'Choose Profile Picture',
+              style: TextStyle(fontSize: 18.0),
             ),
-          ),
           // show the picked image if it exists.
           Flexible(child: _pickedImageByUser(_file)),
           Flexible(
@@ -288,6 +286,18 @@ class _EditProfileState extends State<EditProfile> {
       _formKey.currentState!.save();
       // edit task without update image.
       if (_file == null) {
+        AwesomeDialog(
+            context: context,
+            dialogType: DialogType.INFO,
+            headerAnimationLoop: true,
+            animType: AnimType.BOTTOMSLIDE,
+            title: 'Uploading product now ...',
+            dismissOnBackKeyPress: false,
+            dismissOnTouchOutside: false)
+            .show()
+            .then((value) {
+          Navigator.of(context).pop();
+        });
         await _usersData.doc(_currentUser!.uid).update({
           'name': name,
           'mobileNumber': mobileNumber,
@@ -297,6 +307,18 @@ class _EditProfileState extends State<EditProfile> {
           print("Profile updated");
         }).catchError((error) => print("Failed to update profile: $error"));
       } else {
+        AwesomeDialog(
+            context: context,
+            dialogType: DialogType.INFO,
+            headerAnimationLoop: true,
+            animType: AnimType.BOTTOMSLIDE,
+            title: 'Uploading product now ...',
+            dismissOnBackKeyPress: false,
+            dismissOnTouchOutside: false)
+            .show()
+            .then((value) {
+          Navigator.of(context).pop();
+        });
         // delete current image
         if (_currentImageUrl != '') {
           await _userStorage.refFromURL(_currentImageUrl).delete();

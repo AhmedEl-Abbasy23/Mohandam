@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:handmade_store/shared/functions.dart';
 import 'package:handmade_store/view/edit_profile_view.dart';
+import 'package:handmade_store/view/favorites_view.dart';
 import 'package:handmade_store/view/login_view.dart';
 
 class AccountView extends StatefulWidget {
@@ -18,8 +21,8 @@ class _AccountViewState extends State<AccountView> {
   final CollectionReference _userData =
       FirebaseFirestore.instance.collection('users');
   final User? _currentUser = FirebaseAuth.instance.currentUser;
-
-  String noImage = 'https://st.depositphotos.com/2010753/1970/v/600/depositphotos_19705093-stock-illustration-hand-colorful-vector-design.jpg';
+  final String _appLogoUrl =
+      'https://firebasestorage.googleapis.com/v0/b/handmade-49991.appspot.com/o/mohandam_logo.jpg?alt=media&token=15f1d4be-0af1-47f1-b66f-a5b4d0ed903f';
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +36,29 @@ class _AccountViewState extends State<AccountView> {
             stream: _userData.doc(_currentUser!.uid).snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return SizedBox(
-                  height: 120.0,
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 2.0),
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
+                  height: 180.0,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color(0x10096f77),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
                   child: Row(
                     children: [
                       Expanded(
                         flex: 2,
                         child: CircleAvatar(
-                          radius: 60.0,
-                          backgroundImage:
-                          snapshot.data!.get('imgUrl') != '' ?
-                          NetworkImage(snapshot.data!.get('imgUrl')) : NetworkImage(noImage),
+                          backgroundColor: const Color(0xff096f77),
+                          radius: 68.0,
+                          child: CircleAvatar(
+                            radius: 65.0,
+                            backgroundImage: snapshot.data!.get('imgUrl') != ''
+                                ? NetworkImage(snapshot.data!.get('imgUrl'))
+                                : NetworkImage(_appLogoUrl),
+                          ),
                         ),
                       ),
                       // name & email
@@ -54,7 +69,7 @@ class _AccountViewState extends State<AccountView> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children:  [
+                            children: [
                               Text(
                                 snapshot.data!.get('name'),
                                 style: const TextStyle(
@@ -78,7 +93,7 @@ class _AccountViewState extends State<AccountView> {
                   ),
                 );
               } else {
-                 return const Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
             },
           ),
@@ -90,20 +105,22 @@ class _AccountViewState extends State<AccountView> {
                   leadingImg: 'assets/icons/edit_profile_ic.svg',
                   title: 'Edit Profile',
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> const EditProfile()));
+                    navigatePush(context, const EditProfile());
                   },
                 ),
-                const Divider(),
+                /*const Divider(),
                 _getListTile(
                   leadingImg: 'assets/icons/location_ic.svg',
                   title: 'Shipping Address',
                   onTap: () {},
-                ),
+                ),*/
                 const Divider(),
                 _getListTile(
                   leadingImg: 'assets/icons/favorites_ic2.svg',
                   title: 'Favorites',
-                  onTap: () {},
+                  onTap: () {
+                    navigatePush(context, const FavoritesView());
+                  },
                 ),
                 const Divider(),
                 _getListTile(

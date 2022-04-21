@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:handmade_store/view/product_details_view.dart';
 
+import 'category_products_view.dart';
+
 class ExploreView extends StatefulWidget {
   const ExploreView({Key? key}) : super(key: key);
 
@@ -82,39 +84,48 @@ class _ExploreViewState extends State<ExploreView> {
                           child: ListView.builder(
                             itemCount: categoryImages.length,
                             itemBuilder: (context, index) {
-                              return Card(
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  side: const BorderSide(
-                                      color: Colors.white, width: 1.5),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                        child: Image.network(
-                                          categoryImages[index],
-                                          fit: BoxFit.contain,
-                                          width: 80,
-                                          height: 80,
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          CategoryProductsView(
+                                            categoryName: categoryTitles[index],
+                                          )));
+                                },
+                                child: Card(
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    side: const BorderSide(
+                                        color: Colors.white, width: 1.5),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          child: Image.network(
+                                            categoryImages[index],
+                                            fit: BoxFit.contain,
+                                            width: 80,
+                                            height: 80,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5),
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          categoryTitles[index],
-                                          textAlign: TextAlign.center,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            categoryTitles[index],
+                                            textAlign: TextAlign.center,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -131,7 +142,9 @@ class _ExploreViewState extends State<ExploreView> {
                 }),
             // recommended section
             StreamBuilder<QuerySnapshot?>(
-              stream: _productsData.where('category', isEqualTo: 'Recommended').snapshots(), // todo order by.
+              stream: _productsData
+                  .where('category', isEqualTo: 'Recommended')
+                  .snapshots(), // todo order by.
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot?> snapshot) {
                 if (snapshot.hasData) {
@@ -164,13 +177,16 @@ class _ExploreViewState extends State<ExploreView> {
                                   MaterialPageRoute(
                                     builder: (context) => ProductDetailsView(
                                       productId: snapshot.data!.docs[index].id,
-                                      productImages: snapshot.data!.docs[index]['images'],
+                                      productImages: snapshot.data!.docs[index]
+                                          ['images'],
                                       productDescription: snapshot
                                           .data!.docs[index]['description'],
                                       productPrice: snapshot.data!.docs[index]
                                           ['price'],
                                       productTitle: snapshot.data!.docs[index]
                                           ['title'],
+                                      productInFavorite: snapshot.data!.docs[index]
+                                      ['inFavorite'],
                                     ),
                                   ),
                                 );
@@ -185,7 +201,8 @@ class _ExploreViewState extends State<ExploreView> {
                                     children: [
                                       Expanded(
                                         child: Image.network(
-                                          snapshot.data!.docs[index]['images'][0],
+                                          snapshot.data!.docs[index]['images']
+                                              [0],
                                           fit: BoxFit.cover,
                                           width: double.infinity,
                                           height: double.infinity,
@@ -218,8 +235,10 @@ class _ExploreViewState extends State<ExploreView> {
                                             ),
                                             const SizedBox(height: 8.0),
                                             Text(
-                                              snapshot.data!.docs[index]
-                                                  ['price'],
+                                              '\$${
+                                                  snapshot.data!.docs[index]
+                                                  ['price']
+                                              }',
                                               style: const TextStyle(
                                                 color: Color(0xff096f77),
                                               ),
