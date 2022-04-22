@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:handmade_store/shared/functions.dart';
 import 'package:handmade_store/view/forgot_password_view.dart';
 import 'package:handmade_store/view/main_view.dart';
 import 'package:handmade_store/view/signup_view.dart';
@@ -180,10 +181,7 @@ class _LoginViewState extends State<LoginView> {
                   alignment: Alignment.bottomRight,
                   child: TextButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const ForgotPasswordView()),
-                      );
+                      navigatePush(context, const ForgotPasswordView());
                     },
                     child: const Text(
                       'Forgot Password?',
@@ -213,16 +211,9 @@ class _LoginViewState extends State<LoginView> {
                           print(user.user!.emailVerified);
                           print('----------------  ---------------');
                           if (user.user!.emailVerified) {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) => const MainView()),
-                            );
+                            navigatePushReplacement(context, const MainView());
                           } else {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const VerificationView()),
-                            );
+                            navigatePush(context, const MainView());
                           }
                         });
                       }
@@ -267,10 +258,7 @@ class _LoginViewState extends State<LoginView> {
                         dismissOnTouchOutside: false,
                         autoDismiss: true,
                       ).show();
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const MainView()));
+                      navigatePushReplacement(context, const MainView());
                       print('-------------------------------------');
                       print(credential.user!.emailVerified);
                       print('-------------------------------------');
@@ -332,11 +320,7 @@ class _LoginViewState extends State<LoginView> {
                         dismissOnBackKeyPress: false,
                         dismissOnTouchOutside: false,
                       ).show();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MainView()),
-                      );
+                      navigatePushReplacement(context, const MainView());
                       print(credential.user!.uid);
                     }).catchError((error) {
                       print(error.toString());
