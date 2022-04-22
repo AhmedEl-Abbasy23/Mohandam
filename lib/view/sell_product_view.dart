@@ -352,7 +352,7 @@ class _SellProductViewState extends State<SellProductView> {
                                     // initialValue: snapshot.data!.get('name'),
                                     cursorColor: const Color(0xff096f77),
                                     onSaved: (String? value) {
-                                      _productPrice = value;
+                                      _productPrice = value!;
                                     },
                                     validator: (String? value) {
                                       if (value!.isEmpty) {
@@ -385,7 +385,7 @@ class _SellProductViewState extends State<SellProductView> {
                                     // initialValue: snapshot.data!.get('name'),
                                     cursorColor: const Color(0xff096f77),
                                     onSaved: (String? value) {
-                                      _productQuantity = value;
+                                      _productQuantity = value!;
                                     },
                                     validator: (String? value) {
                                       if (value!.isEmpty) {
@@ -460,8 +460,7 @@ class _SellProductViewState extends State<SellProductView> {
           Navigator.of(context).pop();
         });
         for (var imageFile in _images) {
-          var reference = _productsStorage
-              .ref('products/${_currentCategory ?? _productCategory}/')
+          var reference = _productsStorage.ref('products/${_currentCategory ?? _productCategory}/')
               .child('$rand' + basename(imageFile.path));
           var uploadImages = reference.putFile(File(imageFile.path));
           print('---------------------------');

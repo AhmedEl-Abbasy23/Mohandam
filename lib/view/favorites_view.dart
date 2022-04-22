@@ -161,7 +161,7 @@ class _FavoritesViewState extends State<FavoritesView> {
                                               'assets/icons/favorites_ic2.svg',
                                               color: snapshot.data!
                                                   .docs[index]['inFavorite']
-                                                  ? Colors.orangeAccent : Colors.black,
+                                                  ? const Color(0xffffc107) : Colors.black,
                                               fit: BoxFit.cover,
                                               height: 20.0,
                                               width: 20.0,

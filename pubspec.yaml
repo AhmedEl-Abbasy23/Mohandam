@@ -85,6 +85,8 @@ flutter:
     - assets/icons/location_ic.svg
     - assets/icons/favorites_ic.svg
     - assets/icons/favorites_ic2.svg
+    - assets/icons/favorites_ic3.svg
+    - assets/icons/delete_ic.svg
     - assets/icons/orders_ic.svg
     - assets/icons/logout_ic.svg
     - assets/icons/language_ic.svg

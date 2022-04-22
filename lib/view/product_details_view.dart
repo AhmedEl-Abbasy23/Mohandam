@@ -187,7 +187,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(15),
-                                            color: Colors.orange,
+                                            color: const Color(0xffffc107),
                                           ),
                                         ),
                                         const SizedBox(width: 3.0),
@@ -314,6 +314,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
       'title': productTitle,
       'price': productPrice,
       'quantity': productQuantity,
+      'productId': productId,
     }).then((value) {
       print('-----------------------');
       print('$productTitle is added to your cart.');
