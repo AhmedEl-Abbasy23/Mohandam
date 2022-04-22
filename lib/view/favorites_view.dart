@@ -85,6 +85,8 @@ class _FavoritesViewState extends State<FavoritesView> {
                                       ['title'],
                                   productInFavorite: snapshot.data!.docs[index]
                                       ['inFavorite'],
+                                  productQuantity: snapshot.data!.docs[index]
+                                  ['quantity'],
                                 ),
                               ),
                             );

@@ -461,7 +461,7 @@ class _SellProductViewState extends State<SellProductView> {
         });
         for (var imageFile in _images) {
           var reference = _productsStorage
-              .ref('products/')
+              .ref('products/${_currentCategory ?? _productCategory}/')
               .child('$rand' + basename(imageFile.path));
           var uploadImages = reference.putFile(File(imageFile.path));
           print('---------------------------');

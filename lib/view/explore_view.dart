@@ -187,6 +187,8 @@ class _ExploreViewState extends State<ExploreView> {
                                           ['title'],
                                       productInFavorite: snapshot.data!.docs[index]
                                       ['inFavorite'],
+                                      productQuantity: snapshot.data!.docs[index]
+                                      ['quantity'],
                                     ),
                                   ),
                                 );

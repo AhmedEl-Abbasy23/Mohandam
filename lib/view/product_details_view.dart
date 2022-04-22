@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:handmade_store/view/reusable_widgets/custom_button.dart';
@@ -13,6 +14,7 @@ class ProductDetailsView extends StatefulWidget {
     required this.productTitle,
     required this.productDescription,
     required this.productPrice,
+    required this.productQuantity,
     required this.productInFavorite,
   }) : super(key: key);
   final String productId;
@@ -20,6 +22,7 @@ class ProductDetailsView extends StatefulWidget {
   final String productTitle;
   final String productDescription;
   final String productPrice;
+  final String productQuantity;
   final bool productInFavorite;
 
   @override
@@ -28,6 +31,8 @@ class ProductDetailsView extends StatefulWidget {
 
 class _ProductDetailsViewState extends State<ProductDetailsView> {
   final _productsData = FirebaseFirestore.instance.collection('products');
+  final _currentUser = FirebaseAuth.instance.currentUser;
+  final _cartData = FirebaseFirestore.instance.collection('users');
 
   _addAndRemoveFavorites(String productId, bool inFavorite) async {
     await _productsData.doc(productId).update({
@@ -270,22 +275,61 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                     SizedBox(
                       height: 60.0,
                       width: 146.0,
-                      child: CustomButton('ADD', () {
-                        /*controller.addProduct(
-                      // CartModel(
-                      //   name: _productModel.name,
-                      //   image: _productModel.image,
-                      //   price: _productModel.price,
-                      //   productId: _productModel.productId,
-                      // ),
-                    );*/
-                      }),
+                      child: CustomButton(
+                        'ADD',
+                        () {
+                          _addProductToCart(
+                            productId: widget.productId,
+                            productImages: widget.productImages,
+                            productTitle: widget.productTitle,
+                            productPrice: widget.productPrice,
+                            productQuantity: widget.productQuantity,
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  _addProductToCart({
+    required List productImages,
+    required String productTitle,
+    required String productId,
+    required String productPrice,
+    required String productQuantity,
+  }) async {
+    await _cartData
+        .doc(_currentUser!.uid)
+        .collection('cart')
+        .doc(productId)
+        .set({
+      'image': productImages,
+      'title': productTitle,
+      'price': productPrice,
+      'quantity': productQuantity,
+    }).then((value) {
+      print('-----------------------');
+      print('$productTitle is added to your cart.');
+      print('-----------------------');
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 1),
+        backgroundColor: const Color(0xff096f77),
+        content: SizedBox(
+          height: 50.0,
+          child: Text(
+            '"$productTitle" has been added to your cart successfully',
+            textAlign: TextAlign.start,
+            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+          ),
         ),
       ),
     );
