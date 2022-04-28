@@ -2,6 +2,9 @@ import 'dart:io';
 import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:handmade_store/shared/my_colors.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -23,20 +26,20 @@ class _SellProductViewState extends State<SellProductView> {
   final _currentUser = FirebaseAuth.instance.currentUser!;
 
   List<DropdownMenuItem<String>> get dropdownItems {
-    List<DropdownMenuItem<String>> categories = const [
-      DropdownMenuItem(child: Text("Accessories"), value: "Accessories"),
-      DropdownMenuItem(child: Text("Jewelery"), value: "Jewelery"),
-      DropdownMenuItem(child: Text("Antiques"), value: "Antiques"),
-      DropdownMenuItem(child: Text("Glass"), value: "Glass"),
-      DropdownMenuItem(child: Text("Pottery"), value: "Pottery"),
-      DropdownMenuItem(child: Text("Crochet"), value: "Crochet"),
-      DropdownMenuItem(child: Text("Embroidery"), value: "Embroidery"),
-      DropdownMenuItem(child: Text("Decorations"), value: "Decorations"),
-      DropdownMenuItem(child: Text("Clay"), value: "Clay"),
-      DropdownMenuItem(child: Text("Paint Art"), value: "Paint Art"),
-      DropdownMenuItem(child: Text("Leathers"), value: "Leathers"),
-      DropdownMenuItem(child: Text("Macrames"), value: "Macrames"),
-      DropdownMenuItem(child: Text("Gifts"), value: "Gifts"),
+    List<DropdownMenuItem<String>> categories = [
+      DropdownMenuItem(child: Text(AppStrings.accessories.tr()), value: "Accessories"),
+      DropdownMenuItem(child: Text(AppStrings.jewelery.tr()), value: "Jewelery"),
+      DropdownMenuItem(child: Text(AppStrings.antiques.tr()), value: "Antiques"),
+      DropdownMenuItem(child: Text(AppStrings.glass.tr()), value: "Glass"),
+      DropdownMenuItem(child: Text(AppStrings.pottery.tr()), value: "Pottery"),
+      DropdownMenuItem(child: Text(AppStrings.crochet.tr()), value: "Crochet"),
+      DropdownMenuItem(child: Text(AppStrings.embroidery.tr()), value: "Embroidery"),
+      DropdownMenuItem(child: Text(AppStrings.decorations.tr()), value: "Decorations"),
+      DropdownMenuItem(child: Text(AppStrings.clay.tr()), value: "Clay"),
+      DropdownMenuItem(child: Text(AppStrings.paintArt.tr()), value: "Paint Art"),
+      DropdownMenuItem(child: Text(AppStrings.leathers.tr()), value: "Leathers"),
+      DropdownMenuItem(child: Text(AppStrings.macrame.tr()), value: "Macrame"),
+      DropdownMenuItem(child: Text(AppStrings.gifts.tr()), value: "Gifts"),
       // DropdownMenuItem(child: Text("General"), value: "general"),
     ];
     return categories;
@@ -56,7 +59,7 @@ class _SellProductViewState extends State<SellProductView> {
 
   _selectImages() async {
     final List<XFile>? _selectedImages = await _picker.pickMultiImage(
-      imageQuality: 10,
+      imageQuality: 50,
     );
     if (_selectedImages!.isNotEmpty) {
       setState(() {
@@ -75,9 +78,9 @@ class _SellProductViewState extends State<SellProductView> {
         elevation: 0.0,
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: const Text(
-          'Sell a product',
-          style: TextStyle(fontSize: 24, color: Colors.black),
+        title: Text(
+          AppStrings.sellProduct.tr(),
+          style: const TextStyle(fontSize: 24.0, color: Colors.black),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
@@ -99,7 +102,6 @@ class _SellProductViewState extends State<SellProductView> {
             children: [
               // product details
               Expanded(
-                flex: 13,
                 child: SingleChildScrollView(
                   child: Form(
                     key: _formKey,
@@ -150,7 +152,7 @@ class _SellProductViewState extends State<SellProductView> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Product Category'),
+                                  Text(AppStrings.productCategory.tr()),
                                   Container(
                                     height: 60.0,
                                     width: 200.0,
@@ -189,18 +191,19 @@ class _SellProductViewState extends State<SellProductView> {
                                         Icons.arrow_drop_down_circle_outlined,
                                         color: Colors.white,
                                       ),
-                                      hint: const Text(
-                                        'Choose Category',
-                                        style: TextStyle(
+                                      hint:  Text(
+                                        AppStrings.chooseCategory.tr(),
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.w500,
-                                          fontSize: 16.0,
+                                          fontSize: 15.0,
                                           color: Colors.white,
                                         ),
                                       ),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16.0,
                                         color: Colors.white,
+                                        fontFamily: translator.activeLanguageCode == 'en'?'SFP-REGULAR':"CairoRegular",
                                       ),
                                       value: _currentCategory,
                                       isExpanded: true,
@@ -218,12 +221,6 @@ class _SellProductViewState extends State<SellProductView> {
                                         });
                                       },
                                       autovalidateMode: AutovalidateMode.always,
-                                      /*validator: (String? value) {
-                                        if (value!.isEmpty) {
-                                          return 'Please choose product category';
-                                        }
-                                        return null;
-                                      },*/
                                     ),
                                   ),
                                 ],
@@ -233,7 +230,7 @@ class _SellProductViewState extends State<SellProductView> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Product Images'),
+                                  Text(AppStrings.productImages.tr()),
                                   Container(
                                     height: 60.0,
                                     width: 200.0,
@@ -246,9 +243,9 @@ class _SellProductViewState extends State<SellProductView> {
                                         onPressed: () {
                                           _selectImages();
                                         },
-                                        child: const Text(
-                                          'Choose Images',
-                                          style: TextStyle(
+                                        child:  Text(
+                                          AppStrings.chooseImages.tr(),
+                                          style:const TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16.0,
                                             color: Colors.white,
@@ -267,7 +264,7 @@ class _SellProductViewState extends State<SellProductView> {
                             ),
                           ],
                         ),
-                        const Text('Product Title'),
+                        Text(AppStrings.productTitle.tr()),
                         TextFormField(
                           // initialValue: snapshot.data!.get('name'),
                           cursorColor: const Color(0xff096f77),
@@ -277,9 +274,9 @@ class _SellProductViewState extends State<SellProductView> {
                           },
                           validator: (String? value) {
                             if (value!.isEmpty) {
-                              return 'Please enter the product name';
-                            } else if (value.length < 6) {
-                              return 'Invalid product name';
+                              return AppStrings.pleaseEnterProductName.tr();
+                            } else if (value.length < 2) {
+                              return AppStrings.invalidProductName.tr();
                             }
                             return null;
                           },
@@ -292,7 +289,7 @@ class _SellProductViewState extends State<SellProductView> {
                           ),
                         ),
                         const SizedBox(height: 20.0),
-                        const Text('Product Subtitle'),
+                        Text(AppStrings.productSubtitle.tr()),
                         TextFormField(
                           cursorColor: const Color(0xff096f77),
                           onSaved: (String? value) {
@@ -300,7 +297,7 @@ class _SellProductViewState extends State<SellProductView> {
                           },
                           validator: (String? value) {
                             if (value!.isEmpty) {
-                              return 'Please enter the product subtitle';
+                              return AppStrings.pleaseEnterProductSubtitle.tr();
                             }
                             return null;
                           },
@@ -314,18 +311,18 @@ class _SellProductViewState extends State<SellProductView> {
                           ),
                         ),
                         const SizedBox(height: 20.0),
-                        const Text('Product Description'),
+                        Text(AppStrings.productDescription.tr()),
                         TextFormField(
                           onSaved: (String? value) {
                             _productDescription = value;
                           },
                           // initialValue: snapshot.data!.get('shippingAddress'),
                           cursorColor: const Color(0xff096f77),
-                          maxLines: 6,
+                          maxLines: 5,
                           maxLength: 800,
                           validator: (String? value) {
                             if (value!.isEmpty) {
-                              return 'Please enter the product description';
+                              return AppStrings.pleaseEnterProductDescription.tr();
                             }
                             return null;
                           },
@@ -347,27 +344,27 @@ class _SellProductViewState extends State<SellProductView> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Product Price'),
+                                  Text(AppStrings.productPrice.tr()),
                                   TextFormField(
                                     // initialValue: snapshot.data!.get('name'),
-                                    cursorColor: const Color(0xff096f77),
+                                    cursorColor: MyColors.primary,
                                     onSaved: (String? value) {
                                       _productPrice = value!;
                                     },
                                     validator: (String? value) {
                                       if (value!.isEmpty) {
-                                        return 'Please enter the product price';
+                                        return AppStrings.pleaseEnterProductPrice.tr();
                                       } else if (value.startsWith('0')) {
-                                        return 'Type a valid product price';
+                                        return AppStrings.invalidProductPrice.tr();
                                       }
                                       return null;
                                     },
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.phone,
                                     decoration: const InputDecoration(
                                       // on open form
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: Color(0xff096f77)),
+                                            color: MyColors.primary),
                                       ),
                                     ),
                                   ),
@@ -380,27 +377,27 @@ class _SellProductViewState extends State<SellProductView> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Product Quantity'),
+                                  Text(AppStrings.productQuantity.tr()),
                                   TextFormField(
                                     // initialValue: snapshot.data!.get('name'),
-                                    cursorColor: const Color(0xff096f77),
+                                    cursorColor: MyColors.primary,
                                     onSaved: (String? value) {
                                       _productQuantity = value!;
                                     },
                                     validator: (String? value) {
                                       if (value!.isEmpty) {
-                                        return 'Please enter the product quantity';
+                                        return AppStrings.pleaseEnterProductQuantity.tr();
                                       } else if (value.startsWith('0')) {
-                                        return 'Type a valid product quantity';
+                                        return AppStrings.invalidProductQuantity.tr();
                                       }
                                       return null;
                                     },
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.phone,
                                     decoration: const InputDecoration(
                                       // on open form
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: Color(0xff096f77)),
+                                            color: MyColors.primary),
                                       ),
                                     ),
                                   ),
@@ -416,16 +413,16 @@ class _SellProductViewState extends State<SellProductView> {
               ),
               // Upload product
               Container(
-                margin: const EdgeInsets.only(top: 20.0, bottom: 10.0),
+                margin: const EdgeInsets.only(top: 20.0, bottom: 40.0),
                 height: 60.0,
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
                     _uploadProduct(context);
                   },
-                  child: const Text(
-                    'Upload Product',
-                    style: TextStyle(fontSize: 16.0),
+                  child:  Text(
+                    AppStrings.uploadProduct.tr(),
+                    style:const TextStyle(fontSize: 16.0),
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: const Color(0xff096f77),
@@ -452,7 +449,7 @@ class _SellProductViewState extends State<SellProductView> {
                 dialogType: DialogType.INFO,
                 headerAnimationLoop: true,
                 animType: AnimType.BOTTOMSLIDE,
-                title: 'Uploading product now ...',
+                title: AppStrings.uploadingProduct.tr(),
                 dismissOnBackKeyPress: false,
                 dismissOnTouchOutside: false)
             .show()
@@ -512,8 +509,8 @@ class _SellProductViewState extends State<SellProductView> {
           dialogType: DialogType.NO_HEADER,
           headerAnimationLoop: true,
           animType: AnimType.BOTTOMSLIDE,
-          title: 'Alert',
-          desc: 'Please add the product images',
+          title: AppStrings.alert.tr(),
+          desc: AppStrings.pleaseAddProductImages.tr(),
           buttonsTextStyle: const TextStyle(color: Colors.white),
           btnOkColor: const Color(0xff096f77),
           showCloseIcon: false,

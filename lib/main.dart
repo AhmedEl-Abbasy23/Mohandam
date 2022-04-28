@@ -1,21 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:handmade_store/view/login_view.dart';
-import 'package:handmade_store/view/main_view.dart';
-import 'package:responsive_framework/responsive_framework.dart';
-
-bool userLoggedIn = false;
+import 'package:handmade_store/shared/cache_helper.dart';
+import 'package:handmade_store/shared/localization.dart';
+import 'package:handmade_store/shared/responsive.dart';
+import 'package:handmade_store/view/onboarding_view.dart';
+import 'package:handmade_store/view/splash_view.dart';
+import 'package:handmade_store/view/verification_view.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  if (FirebaseAuth.instance.currentUser != null) {
-    userLoggedIn = true;
-  } else {
-    userLoggedIn = false;
-  }
-  runApp(const MyApp());
+  await MyLocalization.localizationSetup();
+  await CacheHelper.init();
+  runApp(LocalizedApp(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,20 +24,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: userLoggedIn ? const MainView() : const LoginView(),
-      theme: ThemeData(fontFamily: 'SFP-REGULAR'),
-      builder: (context, widget) => ResponsiveWrapper.builder(
-        widget,
-        maxWidth: 2460,
-        minWidth: 450,
-        defaultScale: true,
-        breakpoints: [
-          const ResponsiveBreakpoint.resize(450, name: MOBILE),
-          const ResponsiveBreakpoint.autoScale(800, name: TABLET),
-          const ResponsiveBreakpoint.resize(1000, name: DESKTOP),
-          const ResponsiveBreakpoint.autoScale(2460, name: '4K'),
-        ],
-      ),
+      localizationsDelegates: translator.delegates,
+      // Android + iOS Delegates
+      locale: translator.activeLocale,
+      // Device preview
+      // useInheritedMediaQuery: true,
+      // locale: DevicePreview.locale(context),
+      // Active locale
+      supportedLocales: translator.locals(),
+      // Locals list
+      // home: OnBoardingScreen(),
+      home: const SplashView(),
+      theme: ThemeData(fontFamily: translator.activeLanguageCode == 'en'?'SFP-REGULAR':"CairoSemiBold"),
+      builder: (context, widget) => MyResponsive.responsiveSetup(widget),
     );
   }
 }

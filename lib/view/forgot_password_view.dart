@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/login_view.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 
 class ForgotPasswordView extends StatefulWidget {
   const ForgotPasswordView({Key? key}) : super(key: key);
@@ -39,14 +41,14 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding:  EdgeInsets.symmetric(vertical: 65.0),
+               Padding(
+                padding: const EdgeInsets.symmetric(vertical: 65.0),
                 child: Text(
-                  'Enter your email address to reset \npassword',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+                  AppStrings.enterYourEmail.tr(),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
                 ),
               ),
-              const Text('Email'),
+              Text(AppStrings.email.tr()),
               TextFormField(
                 controller: _emailController,
                 cursorColor: const Color(0xff096f77),
@@ -57,9 +59,9 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 ),
                 validator: (String? value) {
                   if (value!.isEmpty) {
-                    return 'Please enter your email address';
+                    return AppStrings.pleaseEnterEmail.tr();
                   } else if (!value.contains('@') && value.length < 6) {
-                    return 'Invalid email address';
+                    return AppStrings.invalidEmail.tr();
                   }
                   return null;
                 },
@@ -80,9 +82,9 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       });
                     }
                   },
-                  child: const Text(
-                    'RESET PASSWORD',
-                    style: TextStyle(fontSize: 16.0),
+                  child:  Text(
+                    AppStrings.resetPassword.tr().toUpperCase(),
+                    style: const TextStyle(fontSize: 16.0),
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: const Color(0xff096f77),

@@ -1,8 +1,13 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:handmade_store/models/cart_model.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
+import 'package:handmade_store/view/reusable_widgets/cart_item.dart';
+import 'package:intl/intl.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 
 class CartView extends StatefulWidget {
   const CartView({Key? key}) : super(key: key);
@@ -14,10 +19,7 @@ class CartView extends StatefulWidget {
 class _CartViewState extends State<CartView> {
   final _currentUser = FirebaseAuth.instance.currentUser;
   final _cartData = FirebaseFirestore.instance.collection('users');
-
   final _productsData = FirebaseFirestore.instance.collection('products');
-
-
 
   _addAndRemoveFavorites(String productId) async {
     await _productsData.doc(productId).update({
@@ -26,73 +28,65 @@ class _CartViewState extends State<CartView> {
     print('Product in your favorite list now');
   }
 
+  _deleteCartProducts() async{
+    await _cartData.doc(_currentUser!.uid).collection('cart').get().then((snapshot) {
+      for(DocumentSnapshot ds in snapshot.docs){
+        ds.reference.delete();
+      }
+    });
+  }
+
+  List<int> price = [];
+
   int _currentCount = 1;
 
   @override
-  void initState() {
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      child: Column(
-        children: [
-          // products
-          StreamBuilder<QuerySnapshot?>(
-              stream: _cartData
-                  .doc(_currentUser!.uid)
-                  .collection('cart')
-                  .snapshots(),
-              builder: (context, snapshot) {
-
-                return SizedBox(
-                  height: 700.0,
-                  child: Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: ColorScheme.fromSwatch()
-                          .copyWith(secondary: const Color(0xff096f77)),
-                    ),
-                    child: snapshot.hasData
-                        ? ListView.builder(
+    return Padding(
+      padding:
+          const EdgeInsets.only(right: 20.0, left: 20.0, top: 10.0, bottom: 0),
+      child: StreamBuilder<QuerySnapshot?>(
+          stream:
+              _cartData.doc(_currentUser!.uid).collection('cart').snapshots(),
+          builder: (context, snapshot) {
+            return snapshot.hasData
+                ? Column(
+                    children: [
+                      // products
+                      Expanded(
+                        flex: 12,
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.fromSwatch()
+                                .copyWith(secondary: const Color(0xff096f77)),
+                          ),
+                          child: ListView.builder(
                             physics: const ScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: snapshot.data!.docs.length,
-                            itemBuilder: (context, index) {
-                              int productQuantity = int.parse(snapshot.data!.docs[index]['quantity']);
-                              return Dismissible(
-                                secondaryBackground: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 40.0),
-                                  alignment: Alignment.centerRight,
-                                  color: const Color(0xffff3d00),
-                                  width: double.infinity,
-                                  child: SvgPicture.asset(
-                                    'assets/icons/delete_ic.svg',
-                                    color: Colors.white,
-                                    height: 50.0,
-                                    width: 50.0,
-                                  ),
-                                ),
-                                background: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 40.0),
-                                  alignment: Alignment.centerLeft,
-                                  color: const Color(0xffffc107),
-                                  width: double.infinity,
-                                  child: SvgPicture.asset(
-                                    'assets/icons/favorites_ic3.svg',
-                                    color: Colors.white,
-                                    height: 50.0,
-                                    width: 50.0,
-                                  ),
-                                ),
+                            itemBuilder: (BuildContext context, int index) {
+                              CartModel _cartModel = CartModel(
+                                productId:
+                                    snapshot.data!.docs[index].get('productId'),
+                                title: snapshot.data!.docs[index].get('title'),
+                                images:
+                                    snapshot.data!.docs[index].get('images'),
+                                price: int.parse(
+                                    snapshot.data!.docs[index].get('price')),
+                                quantity: int.parse(
+                                    snapshot.data!.docs[index].get('quantity')),
+                              );
+                              return CartProduct(
+                                title: _cartModel.title,
+                                image: _cartModel.images[0],
+                                counter: 1,
+                                price: _cartModel.price,
+                                quantity: _cartModel.quantity,
                                 onDismissed: (DismissDirection direction) {
-                                  if (direction == DismissDirection.startToEnd) {
-                                    _addAndRemoveFavorites(snapshot.data!.docs[index]['productId']);
+                                  if (direction ==
+                                      DismissDirection.startToEnd) {
+                                    _addAndRemoveFavorites(snapshot
+                                        .data!.docs[index]['productId']);
                                   } else {
                                     _cartData
                                         .doc(_currentUser!.uid)
@@ -101,188 +95,104 @@ class _CartViewState extends State<CartView> {
                                         .delete();
                                   }
                                 },
-                                key: UniqueKey(),
-                                child: Card(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 5.0),
-                                  elevation: 5.0,
-                                  child: SizedBox(
-                                    height: 130.0,
-                                    width: double.infinity,
-                                    // margin:
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 1,
-                                          child: Image.network(
-                                            snapshot.data!.docs[index]['image']
-                                                [0],
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        Expanded(
-                                            flex: 2,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20.0,
-                                                      vertical: 10.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    snapshot.data!.docs[index]
-                                                        ['title'],
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 8.0),
-                                                  Text(
-                                                    '\$${snapshot.data!.docs[index]['price']}',
-                                                    style: const TextStyle(
-                                                      color: Color(0xff096f77),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 30.0),
-                                                  // counter
-                                                  Expanded(
-                                                    child: Container(
-                                                      padding: EdgeInsets.zero,
-                                                      width: 80.0,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5.0),
-                                                        color: Colors
-                                                            .grey.shade300,
-                                                      ),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          _createIncrementDecrementButton(
-                                                            Icons.add,
-                                                            () {
-                                                              _increment(productQuantity);
-                                                            },
-                                                          ),
-                                                          Text('$_currentCount'),
-                                                          _createIncrementDecrementButton(
-                                                            Icons.remove,
-                                                            () {
-                                                              _decrement();
-                                                            }
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )),
-                                      ],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      // order now
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppStrings.totalPrice.tr(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: Text(
+                                    '\$0', // todo solve it.
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0,
+                                      color: Color(0xff096f77),
                                     ),
                                   ),
                                 ),
-                              );
-                            },
-                          )
-                        : const Center(
-                            child: CircularProgressIndicator(
-                                color: Color(0xff096f77)),
-                          ),
-                  ),
-                );
-              }),
-          // order now
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 25.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Total',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                              ],
+                            ),
+                            SizedBox(
+                              height: 50.0,
+                              width: 150.0,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  List.generate(snapshot.data!.docs.length,
+                                      (index) {
+                                    orderNow(
+                                      // todo pass an index instead of 0.
+                                      sellerUid: snapshot.data!.docs[index]['sellerUid'],
+                                      orderImages: [snapshot.data!.docs[index].get('images')[0]],
+                                      productName: snapshot.data!.docs[index]['title'],
+                                      productPrice: snapshot.data!.docs[index]['price'],
+                                    );
+                                  });
+                                },
+                                child:  Text(
+                                  AppStrings.orderNow.tr().toUpperCase(),
+                                  style: const TextStyle(fontSize: 16.0),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  primary: const Color(0xff096f77),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Text(
-                      '\$4500',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                        color: Color(0xff096f77),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 50.0,
-                  width: 150.0,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'ORDER NOW',
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      primary: const Color(0xff096f77),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+                    ],
+                  )
+                : const Center(
+                    child: CircularProgressIndicator(color: Color(0xff096f77)),
+                  );
+          }),
     );
   }
 
-  _increment(int productQuantity) {
-    if (_currentCount < productQuantity) {
-      setState(() {
-        _currentCount++;
+  orderNow({
+    required String sellerUid,
+    required List orderImages,
+    required String productName,
+    required String productPrice,
+  }) async {
+    final random = Random().nextInt(1500);
+    var dateString = DateFormat.yMMMEd().format(DateTime.now());
+    _cartData.doc(_currentUser!.uid).collection('orders').add({
+      'title': 'ORDER -Code -$random\n$productName',
+      'orderType': 'Buy',
+      'orderTime': dateString,
+      'status': 'In Transit',
+      'totalPrice': productPrice,
+      'orderImages': orderImages,
+    }).then((value) {
+      _cartData.doc(sellerUid).collection('orders').add({
+        'title': 'REQUEST -Code -$random\n$productName',
+        'orderType': 'Requests',
+        'orderTime': dateString,
+        'totalPrice': productPrice,
+        'customerUid': _currentUser!.uid,
+        'orderImages': orderImages,
       });
-    }
-  }
-
-  _decrement() {
-    if (_currentCount > 1) {
-      setState(() {
-        {
-          _currentCount--;
-        }
-      });
-    }
-  }
-
-  Widget _createIncrementDecrementButton(IconData icon, Function onPressed) {
-    return RawMaterialButton(
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      constraints: const BoxConstraints(minWidth: 30.0, minHeight: 32.0),
-      onPressed: () {
-        onPressed();
-      },
-      elevation: 0.0,
-      fillColor: Colors.grey.shade300,
-      child: Icon(
-        icon,
-        color: Colors.black,
-        size: 15.0,
-      ),
-      // shape: const CircleBorder(),
-    );
+      _deleteCartProducts();
+      print('-----------------------');
+      print('Order Done');
+      print('-----------------------');
+    });
   }
 }

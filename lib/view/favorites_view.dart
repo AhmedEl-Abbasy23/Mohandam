@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:handmade_store/shared/functions.dart';
 import 'package:handmade_store/view/product_details_view.dart';
 
 class FavoritesView extends StatefulWidget {
@@ -71,25 +72,21 @@ class _FavoritesViewState extends State<FavoritesView> {
                         return InkWell(
                           onTap: () {
                             // navigate to product details screen.
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ProductDetailsView(
-                                  productId: snapshot.data!.docs[index].id,
-                                  productImages: snapshot.data!.docs[index]
-                                      ['images'],
-                                  productDescription: snapshot.data!.docs[index]
-                                      ['description'],
-                                  productPrice: snapshot.data!.docs[index]
-                                      ['price'],
-                                  productTitle: snapshot.data!.docs[index]
-                                      ['title'],
-                                  productInFavorite: snapshot.data!.docs[index]
-                                      ['inFavorite'],
-                                  productQuantity: snapshot.data!.docs[index]
-                                  ['quantity'],
-                                ),
-                              ),
-                            );
+                            navigatePush(context, ProductDetailsView(
+                              productId: snapshot.data!.docs[index].id,
+                              productImages: snapshot.data!.docs[index]
+                              ['images'],
+                              productDescription: snapshot.data!.docs[index]
+                              ['description'],
+                              productPrice: snapshot.data!.docs[index]
+                              ['price'],
+                              productTitle: snapshot.data!.docs[index]
+                              ['title'],
+                              productInFavorite: snapshot.data!.docs[index]
+                              ['inFavorite'],
+                              productQuantity: snapshot.data!.docs[index]
+                              ['quantity'],
+                            ));
                           },
                           child: Hero(
                             tag: snapshot.data!.docs[index].id,

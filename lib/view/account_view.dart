@@ -3,10 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:handmade_store/shared/cache_helper.dart';
 import 'package:handmade_store/shared/functions.dart';
+import 'package:handmade_store/shared/localization.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/edit_profile_view.dart';
 import 'package:handmade_store/view/favorites_view.dart';
 import 'package:handmade_store/view/login_view.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
+
+import 'orders_view.dart';
 
 class AccountView extends StatefulWidget {
   const AccountView({Key? key}) : super(key: key);
@@ -103,21 +109,15 @@ class _AccountViewState extends State<AccountView> {
               children: [
                 _getListTile(
                   leadingImg: 'assets/icons/edit_profile_ic.svg',
-                  title: 'Edit Profile',
+                  title: AppStrings.editProfile.tr(),
                   onTap: () {
                     navigatePush(context, const EditProfile());
                   },
                 ),
-                /*const Divider(),
-                _getListTile(
-                  leadingImg: 'assets/icons/location_ic.svg',
-                  title: 'Shipping Address',
-                  onTap: () {},
-                ),*/
                 const Divider(),
                 _getListTile(
                   leadingImg: 'assets/icons/favorites_ic2.svg',
-                  title: 'Favorites',
+                  title: AppStrings.favorites.tr(),
                   onTap: () {
                     navigatePush(context, const FavoritesView());
                   },
@@ -125,25 +125,27 @@ class _AccountViewState extends State<AccountView> {
                 const Divider(),
                 _getListTile(
                   leadingImg: 'assets/icons/orders_ic.svg',
-                  title: 'Orders',
-                  onTap: () {},
+                  title: AppStrings.orders.tr(),
+                  onTap: () {
+                    navigatePush(context, OrdersView());
+                  },
                 ),
                 const Divider(),
                 _getListTile(
                   leadingImg: 'assets/icons/language_ic.svg',
-                  title: 'Change Language',
-                  onTap: () {},
+                  title: AppStrings.changeLanguage.tr(),
+                  onTap: () {
+                    MyLocalization.changeLanguage(context);
+                    // CacheHelper.saveData(key: 'lang', value: translator.activeLanguageCode);
+                  },
                 ),
                 const Divider(),
                 _getListTile(
                   leadingImg: 'assets/icons/logout_ic.svg',
-                  title: 'Logout',
+                  title: AppStrings.logout.tr(),
                   onTap: () async {
                     _auth.signOut().then((value) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginView()));
+                      navigatePushReplacement(context, const LoginView());
                     });
                   },
                 ),

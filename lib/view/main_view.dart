@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:handmade_store/shared/functions.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
+import 'package:handmade_store/view/search_view.dart';
 import 'package:handmade_store/view/sell_product_view.dart';
 import 'package:handmade_store/view/account_view.dart';
 import 'package:handmade_store/view/cart_view.dart';
 import 'package:handmade_store/view/explore_view.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 
 class MainView extends StatefulWidget {
   const MainView({Key? key}) : super(key: key);
@@ -26,53 +30,30 @@ class _MainViewState extends State<MainView> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          elevation: 0.0,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          title: _currentIndex != 2
-              ? Container(
+        elevation: 0.0,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: _currentIndex != 2
+            ? GestureDetector(
+                onTap: () {
+                  // navigatePush(context, SearchView(_searchValue));
+                },
+                child: Container(
                   width: 300.0,
-                  height: 50.0,
+                  height: 60.0,
                   color: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child: TextField(
-                    cursorColor: const Color(0xff096f77),
-                    decoration: InputDecoration(
-                      fillColor: Colors.grey.shade200,
-                      filled: true,
-                      prefixIcon: const Icon(Icons.search,
-                          color: Colors.black, size: 28),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: const BorderSide(color: Colors.transparent),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                        borderSide: BorderSide(color: Colors.transparent),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                        borderSide: BorderSide(color: Colors.transparent),
-                      ),
-                      errorBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                        borderSide: BorderSide(color: Colors.transparent),
-                      ),
-                      focusedErrorBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                      ),
-                    ),
-                  ),
-                )
-              : null),
+                  child: _textFieldWidget(),
+                ),
+              )
+            : null,
+      ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        // selectedLabelStyle: const TextStyle(fontSize: 29.0, color: Colors.black),
         showUnselectedLabels: false,
         showSelectedLabels: false,
         backgroundColor: Colors.white,
-        elevation: 0.0,
+        elevation: 2.0,
         currentIndex: _currentIndex,
         onTap: (int index) {
           setState(() {
@@ -82,11 +63,13 @@ class _MainViewState extends State<MainView> {
         items: [
           BottomNavigationBarItem(
             icon: _currentIndex == 0
-                ? const Text(
-                    'Explore',
+                ?  Text(
+                    AppStrings.explore.tr(),
                     textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              style: const TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
                   )
                 : SvgPicture.asset(
                     'assets/icons/explore_ic.svg',
@@ -98,11 +81,13 @@ class _MainViewState extends State<MainView> {
           ),
           BottomNavigationBarItem(
             icon: _currentIndex == 1
-                ? const Text(
-                    'Cart',
+                ?  Text(
+              AppStrings.cart.tr(),
                     textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              style: const TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
                   )
                 : SvgPicture.asset(
                     'assets/icons/cart_ic.svg',
@@ -114,11 +99,13 @@ class _MainViewState extends State<MainView> {
           ),
           BottomNavigationBarItem(
             icon: _currentIndex == 2
-                ? const Text(
-                    'Account',
+                ?  Text(
+              AppStrings.account.tr(),
                     textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              style: const TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
                   )
                 : SvgPicture.asset(
                     'assets/icons/user_ic.svg',
@@ -134,16 +121,49 @@ class _MainViewState extends State<MainView> {
           ? FloatingActionButton(
               child: Image.asset('assets/icons/sell_product_ic.png'),
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => const SellProductView()),
-                );
+                navigatePush(context, const SellProductView());
               },
               backgroundColor: Colors.transparent,
-        elevation: 0.0,
-              // backgroundColor: const Color(0xff096f77),
+              elevation: 10.0,
             )
           : null,
+    );
+  }
+
+  Widget _textFieldWidget() {
+    return TextField(
+      onChanged: (String? value) {
+        navigatePush(context, SearchView(value));
+      },
+      cursorColor: const Color(0xff096f77),
+      style: const TextStyle(
+        fontSize: 12.0,
+      ),
+      decoration: InputDecoration(
+        fillColor: Colors.grey.shade200,
+        filled: true,
+        prefixIcon: const Icon(Icons.search, color: Colors.black, size: 28),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(25.0),
+          borderSide: const BorderSide(color: Colors.transparent),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+          borderSide: BorderSide(color: Colors.transparent),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+          borderSide: BorderSide(color: Colors.transparent),
+        ),
+        errorBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+          borderSide: BorderSide(color: Colors.transparent),
+        ),
+        focusedErrorBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.transparent),
+          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+        ),
+      ),
     );
   }
 }

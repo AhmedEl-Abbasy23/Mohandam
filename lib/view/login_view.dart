@@ -6,10 +6,12 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:handmade_store/shared/functions.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/forgot_password_view.dart';
 import 'package:handmade_store/view/main_view.dart';
 import 'package:handmade_store/view/signup_view.dart';
 import 'package:handmade_store/view/verification_view.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -72,7 +74,7 @@ class _LoginViewState extends State<LoginView> {
               .copyWith(secondary: const Color(0xff096f77)),
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -85,18 +87,18 @@ class _LoginViewState extends State<LoginView> {
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
-                            'Welcome,',
-                            style: TextStyle(
+                            AppStrings.welcome.tr(),
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 35.0,
                             ),
                           ),
-                          SizedBox(height: 10.0),
+                          const SizedBox(height: 10.0),
                           Text(
-                            'Sign in to Continue',
-                            style: TextStyle(
+                            AppStrings.signInToContinue.tr(),
+                            style: const TextStyle(
                               fontSize: 16.0,
                             ),
                           ),
@@ -107,9 +109,9 @@ class _LoginViewState extends State<LoginView> {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => const SignUpView()));
                         },
-                        child: const Text(
-                          'Sign Up',
-                          style: TextStyle(
+                        child:  Text(
+                          AppStrings.signUp.tr(),
+                          style: const TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 20.0,
                             color: Color(0xff096f77),
@@ -119,15 +121,15 @@ class _LoginViewState extends State<LoginView> {
                     ],
                   ),
                 ),
-                const Text('Email'),
+                Text(AppStrings.email.tr()),
                 TextFormField(
                   controller: _emailController,
                   cursorColor: const Color(0xff096f77),
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return 'Please enter your email address';
+                      return  AppStrings.pleaseEnterEmail.tr();
                     } else if (!value.contains('@') && value.length < 6) {
-                      return 'Invalid email address';
+                      return AppStrings.invalidEmail.tr();
                     }
                     return null;
                   },
@@ -140,16 +142,16 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 const SizedBox(height: 20.0),
-                const Text('Password'),
+                Text(AppStrings.password.tr()),
                 TextFormField(
                   controller: _passwordController,
                   cursorColor: const Color(0xff096f77),
                   obscureText: isObscure,
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return 'Please enter your password';
+                      return AppStrings.pleaseEnterPassword.tr();
                     } else if (value.length < 6) {
-                      return 'Invalid password';
+                      return AppStrings.invalidPassword.tr();
                     }
                     return null;
                   },
@@ -183,9 +185,9 @@ class _LoginViewState extends State<LoginView> {
                     onPressed: () {
                       navigatePush(context, const ForgotPasswordView());
                     },
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
+                    child:  Text(
+                      AppStrings.forgotPassword.tr(),
+                      style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                       ),
@@ -213,28 +215,38 @@ class _LoginViewState extends State<LoginView> {
                           if (user.user!.emailVerified) {
                             navigatePushReplacement(context, const MainView());
                           } else {
-                            navigatePush(context, const MainView());
+                            navigatePushReplacement(context, const VerificationView());
                           }
                         });
                       }
                     },
-                    child: const Text(
-                      'SIGN IN',
-                      style: TextStyle(fontSize: 16.0),
+                    child:  Text(
+                      AppStrings.signIn.tr().toUpperCase(),
+                      style:const TextStyle(fontSize: 16.0),
                     ),
                     style: ElevatedButton.styleFrom(
                       primary: const Color(0xff096f77),
                     ),
                   ),
                 ),
-                const Center(
+                 Center(
                     child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 35.0),
-                  child: Text('-OR-', style: TextStyle(fontSize: 20.0)),
+                  padding:const EdgeInsets.symmetric(vertical: 35.0),
+                  child: Text('-${AppStrings.or.tr()}-', style:const TextStyle(fontSize: 20.0)),
                 )),
                 // facebook sign-in
                 GestureDetector(
                   onTap: () async {
+                    AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.NO_HEADER,
+                    headerAnimationLoop: true,
+                    animType: AnimType.BOTTOMSLIDE,
+                    title: AppStrings.loading.tr(),
+                    dismissOnBackKeyPress: false,
+                    dismissOnTouchOutside: false,
+                    autoDismiss: true,
+                  ).show();
                     await signInWithFacebook().then((credential) {
                       FirebaseFirestore.instance
                           .collection('users')
@@ -248,16 +260,7 @@ class _LoginViewState extends State<LoginView> {
                         'imgUrl': '',
                         'shippingAddress': '',
                       });
-                      AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.NO_HEADER,
-                        headerAnimationLoop: true,
-                        animType: AnimType.BOTTOMSLIDE,
-                        title: 'Loading ...',
-                        dismissOnBackKeyPress: false,
-                        dismissOnTouchOutside: false,
-                        autoDismiss: true,
-                      ).show();
+
                       navigatePushReplacement(context, const MainView());
                       print('-------------------------------------');
                       print(credential.user!.emailVerified);
@@ -282,11 +285,11 @@ class _LoginViewState extends State<LoginView> {
                             width: 26.0,
                           ),
                         ),
-                        const Expanded(
+                         Expanded(
                           flex: 2,
                           child: Text(
-                            'Sign In with Facebook',
-                            style: TextStyle(fontSize: 16.0),
+                             AppStrings.facebookSignIn.tr(),
+                            style: const TextStyle(fontSize: 16.0),
                           ),
                         ),
                         const SizedBox(width: 30.0),
@@ -316,7 +319,7 @@ class _LoginViewState extends State<LoginView> {
                         dialogType: DialogType.NO_HEADER,
                         headerAnimationLoop: true,
                         animType: AnimType.BOTTOMSLIDE,
-                        title: 'Loading ...',
+                        title: AppStrings.loading.tr(),
                         dismissOnBackKeyPress: false,
                         dismissOnTouchOutside: false,
                       ).show();
@@ -342,11 +345,11 @@ class _LoginViewState extends State<LoginView> {
                             width: 26.0,
                           ),
                         ),
-                        const Expanded(
+                         Expanded(
                           flex: 2,
                           child: Text(
-                            'Sign In with Google',
-                            style: TextStyle(fontSize: 16.0),
+                            AppStrings.googleSignIn.tr(),
+                            style: const TextStyle(fontSize: 16.0),
                           ),
                         ),
                         const SizedBox(width: 10.0),

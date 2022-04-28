@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/main_view.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 
 class VerificationView extends StatefulWidget {
   const VerificationView({Key? key}) : super(key: key);
@@ -34,18 +36,17 @@ class _VerificationViewState extends State<VerificationView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Verify Email',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0),
+           Text(
+              AppStrings.verifyEmail.tr(),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0),
             ),
             const SizedBox(height: 10.0),
             RichText(
               text: TextSpan(
                 style: const TextStyle(fontSize: 16.0, color: Colors.grey),
                 children: [
-                  const TextSpan(
-                    text:
-                        'Verification link has been sent to your email address:\n',
+                  TextSpan(
+                    text: AppStrings.verificationLink.tr(),
                   ),
                   TextSpan(
                     text: '${_auth.currentUser!.email}',
@@ -54,8 +55,8 @@ class _VerificationViewState extends State<VerificationView> {
                       fontSize: 16.0,
                     ),
                   ),
-                  const TextSpan(
-                    text: ', check your email and verify it.',
+                  TextSpan(
+                    text: AppStrings.checkEmail.tr(),
                   ),
                 ],
               ),
@@ -70,9 +71,9 @@ class _VerificationViewState extends State<VerificationView> {
                       MaterialPageRoute(builder: (context) => const MainView()),
                     );
                   },
-                  child: const Text(
-                    'CONTINUE',
-                    style: TextStyle(fontSize: 16.0),
+                  child:  Text(
+                    AppStrings.continue1.tr().toUpperCase(),
+                    style: const TextStyle(fontSize: 16.0),
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: const Color(0xff096f77),

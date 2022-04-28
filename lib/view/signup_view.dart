@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:handmade_store/shared/functions.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/verification_view.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({Key? key}) : super(key: key);
@@ -50,20 +53,21 @@ class _SignUpViewState extends State<SignUpView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Sign Up',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0),
+                Text(
+                  AppStrings.signUp.tr(),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 32.0),
                 ),
                 const SizedBox(height: 65.0),
-                const Text('Name'),
+                Text(AppStrings.name.tr()),
                 TextFormField(
                   controller: _userNameController,
                   cursorColor: const Color(0xff096f77),
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return 'Please enter your username';
+                      return AppStrings.pleaseEnterName.tr();
                     } else if (value.length < 6) {
-                      return 'Invalid username';
+                      return AppStrings.invalidName.tr();
                     }
                     return null;
                   },
@@ -75,7 +79,7 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                 ),
                 const SizedBox(height: 35.0),
-                const Text('Email'),
+                Text(AppStrings.email.tr()),
                 TextFormField(
                   controller: _emailController,
                   cursorColor: const Color(0xff096f77),
@@ -86,25 +90,25 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return 'Please enter your email address';
+                      return AppStrings.pleaseEnterEmail.tr();
                     } else if (!value.contains('@') && value.length < 6) {
-                      return 'Invalid email address';
+                      return AppStrings.invalidEmail.tr();
                     }
                     return null;
                   },
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 35.0),
-                const Text('Password'),
+                Text(AppStrings.password.tr()),
                 TextFormField(
                   controller: _passwordController,
                   cursorColor: const Color(0xff096f77),
                   obscureText: isObscure,
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return 'Please enter your password';
+                      return AppStrings.pleaseEnterPassword.tr();
                     } else if (value.length < 6) {
-                      return 'Invalid password';
+                      return AppStrings.invalidPassword.tr();
                     }
                     return null;
                   },
@@ -156,17 +160,16 @@ class _SignUpViewState extends State<SignUpView> {
                             'shippingAddress': '',
                           });
                           print(user.user!.email);
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                                  builder: (context) => const VerificationView(
-                                      // email: _emailController.text
-                                      )));
+                          navigatePushReplacement(
+                            context,
+                            const VerificationView(),
+                          );
                         });
                       }
                     },
-                    child: const Text(
-                      'SIGN UP',
-                      style: TextStyle(fontSize: 16.0),
+                    child: Text(
+                      AppStrings.signUp.tr().toUpperCase(),
+                      style: const TextStyle(fontSize: 16.0),
                     ),
                     style: ElevatedButton.styleFrom(
                       primary: const Color(0xff096f77),

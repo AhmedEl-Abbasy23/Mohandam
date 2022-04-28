@@ -2,7 +2,7 @@
     package="com.example.handmade_store">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="handmade_store"
+        android:label="Mohandam"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

@@ -1,27 +1,30 @@
 class CartModel {
-  late String title, image, price, productId;
-  late int quantity;
+  late String title, productId;
+  late int quantity, price;
+  late List images;
 
   CartModel({
     required this.title,
-    required this.image,
+    required this.images,
     required this.price,
     required this.productId,
     this.quantity = 1,
   });
 
-  CartModel.fromJson(Map<dynamic, dynamic> map) {
-    title = map['title'];
-    image = map['image'];
-    price = map['price'];
-    productId = map['productId'];
-    quantity = map['quantity'];
+  factory CartModel.fromJson(Map<dynamic, dynamic> map) {
+    return CartModel(
+      productId: map['productId'],
+      title: map['title'],
+      images: map['images'],
+      price: map['price'],
+      quantity: map['quantity'],
+    );
   }
 
-  toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'title': title,
-      'image': image,
+      'images': images,
       'price': price,
       'productId': productId,
       'quantity': quantity,

@@ -1,7 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:handmade_store/shared/functions.dart';
+import 'package:handmade_store/shared/my_colors.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/product_details_view.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 
 import 'category_products_view.dart';
 
@@ -24,7 +28,7 @@ class _ExploreViewState extends State<ExploreView> {
           colorScheme: ColorScheme.fromSwatch()
               .copyWith(secondary: const Color(0xff096f77))),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 5.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -35,7 +39,9 @@ class _ExploreViewState extends State<ExploreView> {
                     AsyncSnapshot<DocumentSnapshot> snapshot) {
                   if (snapshot.hasData) {
                     List banners = snapshot.data!['banners'];
-                    List categoryTitles = snapshot.data!['categories'];
+                    List categoryTitles = translator.activeLanguageCode != 'ar'
+                        ? snapshot.data!['categories']
+                        : snapshot.data!['categoriesAr'];
                     List categoryImages = snapshot.data!['categoryImages'];
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +70,7 @@ class _ExploreViewState extends State<ExploreView> {
                             );
                           },
                           options: CarouselOptions(
-                            height: 190,
+                            height: 220.0,
                             autoPlay: true,
                             enableInfiniteScroll: true,
                             enlargeCenterPage: true,
@@ -72,30 +78,36 @@ class _ExploreViewState extends State<ExploreView> {
                                 const Duration(milliseconds: 500),
                           ),
                         ),
-                        const SizedBox(height: 12.0),
+                        const SizedBox(height: 15.0),
                         // categories section
-                        const Text(
-                          'Categories',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        Text(
+                          AppStrings.categories.tr(),
+                            style: const TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                         ),
                         Container(
                           height: 100,
-                          margin: const EdgeInsets.symmetric(vertical: 12.0),
+                          margin: const EdgeInsets.symmetric(vertical: 15.0),
                           child: ListView.builder(
                             itemCount: categoryImages.length,
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          CategoryProductsView(
-                                            categoryName: categoryTitles[index],
-                                          )));
+                                  navigatePush(
+                                      context,
+                                      CategoryProductsView(
+                                        // to show in appBar
+                                        categoryName: categoryTitles[index],
+                                        // for filed name when getting data
+                                        category: snapshot.data!['categories'][index],
+                                      ));
                                 },
                                 child: Card(
                                   elevation: 4,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(12.0),
                                     side: const BorderSide(
                                         color: Colors.white, width: 1.5),
                                   ),
@@ -104,18 +116,18 @@ class _ExploreViewState extends State<ExploreView> {
                                       Expanded(
                                         child: ClipRRect(
                                           borderRadius:
-                                              BorderRadius.circular(12.0),
+                                              BorderRadius.circular(15.0),
                                           child: Image.network(
                                             categoryImages[index],
                                             fit: BoxFit.contain,
-                                            width: 80,
-                                            height: 80,
+                                            width: 80.0,
+                                            height: 80.0,
                                           ),
                                         ),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
+                                            vertical: 5.0),
                                         child: Align(
                                           alignment: Alignment.center,
                                           child: Text(
@@ -136,24 +148,27 @@ class _ExploreViewState extends State<ExploreView> {
                     );
                   } else {
                     return const Center(
-                        child: CircularProgressIndicator(
-                            color: Color(0xff096f77)));
+                      child: CircularProgressIndicator(color: MyColors.primary),
+                    );
                   }
                 }),
             // recommended section
             StreamBuilder<QuerySnapshot?>(
               stream: _productsData
                   .where('category', isEqualTo: 'Recommended')
-                  .snapshots(), // todo order by.
+                  .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot?> snapshot) {
                 if (snapshot.hasData) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Recommended',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      Text(
+                        AppStrings.recommended.tr(),
+                        style: const TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -185,10 +200,10 @@ class _ExploreViewState extends State<ExploreView> {
                                           ['price'],
                                       productTitle: snapshot.data!.docs[index]
                                           ['title'],
-                                      productInFavorite: snapshot.data!.docs[index]
-                                      ['inFavorite'],
-                                      productQuantity: snapshot.data!.docs[index]
-                                      ['quantity'],
+                                      productInFavorite: snapshot
+                                          .data!.docs[index]['inFavorite'],
+                                      productQuantity: snapshot
+                                          .data!.docs[index]['quantity'],
                                     ),
                                   ),
                                 );
@@ -237,10 +252,7 @@ class _ExploreViewState extends State<ExploreView> {
                                             ),
                                             const SizedBox(height: 8.0),
                                             Text(
-                                              '\$${
-                                                  snapshot.data!.docs[index]
-                                                  ['price']
-                                              }',
+                                              '\$${snapshot.data!.docs[index]['price']}',
                                               style: const TextStyle(
                                                 color: Color(0xff096f77),
                                               ),
@@ -261,7 +273,7 @@ class _ExploreViewState extends State<ExploreView> {
                 } else {
                   return const Center(
                       child:
-                          CircularProgressIndicator(color: Color(0xff096f77)));
+                          CircularProgressIndicator(color: MyColors.primary));
                 }
               },
             ),

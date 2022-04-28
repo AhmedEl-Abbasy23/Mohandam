@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:handmade_store/shared/my_colors.dart';
 import 'package:handmade_store/view/reusable_widgets/custom_button.dart';
 import 'package:handmade_store/view/reusable_widgets/custom_text.dart';
+import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 
 class ProductDetailsView extends StatefulWidget {
   const ProductDetailsView({
@@ -41,258 +43,356 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     print('Product updated');
   }
 
+  final String appLogo =
+      'https://firebasestorage.googleapis.com/v0/b/handmade-49991.appspot.com/o/mohandam_logo.jpg?alt=media&token=15f1d4be-0af1-47f1-b66f-a5b4d0ed903f';
+
+  _getSellerUid() {
+    return _productsData
+        .doc(widget.productId)
+        .collection('seller info')
+        .snapshots();
+  }
+
+  List<dynamic> selectedImages = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Product section
-            StreamBuilder<DocumentSnapshot?>(
-              stream: _productsData.doc(widget.productId).snapshots(),
-              builder: (BuildContext context, snapshot) {
-                if (snapshot.hasData) {
-                  return Column(
-                    children: [
-                      // images & buttons
-                      Stack(
-                        alignment: Alignment.centerLeft,
-                        children: [
-                          // product images section
-                          Hero(
-                            tag: widget.productId,
-                            child: Container(
-                              margin: const EdgeInsets.only(top: 50.0),
-                              height: 280.0,
-                              child: CarouselSlider.builder(
-                                itemCount: widget.productImages.length,
-                                itemBuilder: (context, index, _) {
-                                  return Card(
-                                    elevation: 5.0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      side: const BorderSide(
-                                          color: Colors.white, width: 1.5),
+      backgroundColor: Colors.white,
+      body: Theme(
+        data: Theme.of(context).copyWith(
+            colorScheme:
+                ColorScheme.fromSwatch().copyWith(secondary: MyColors.primary)),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              left: 20.0, right: 20.0, top: 20.0, bottom: 0.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Product section
+              Expanded(
+                child: SingleChildScrollView(
+                    child: StreamBuilder<DocumentSnapshot>(
+                        stream: _productsData.doc(widget.productId).snapshots(),
+                        builder: (BuildContext context, snapshot) {
+                          List productImages = snapshot.data!['images'];
+                          if (snapshot.hasData) {
+                            return Column(
+                              children: [
+                                // images & buttons
+                                Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: [
+                                    // product images section
+                                    Hero(
+                                      tag: widget.productId,
+                                      child: Container(
+                                        margin:
+                                            const EdgeInsets.only(top: 20.0),
+                                        height: 250.0,
+                                        child: CarouselSlider.builder(
+                                          itemCount:
+                                              snapshot.data!['images'].length,
+                                          itemBuilder: (context, index, _) {
+                                            return Card(
+                                              elevation: 5.0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15.0),
+                                                side: const BorderSide(
+                                                  color: Colors.white,
+                                                  width: 1.5,
+                                                ),
+                                              ),
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
+                                                  child: productImages
+                                                          .isNotEmpty
+                                                      ? Image.network(
+                                                          productImages[index],
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : Image.asset(
+                                                          'assets/images/mohandam_logo.jpg',
+                                                          fit: BoxFit.cover,
+                                                        )),
+                                            );
+                                          },
+                                          options: CarouselOptions(
+                                            height: 230,
+                                            autoPlay: true,
+                                            enableInfiniteScroll: true,
+                                            enlargeCenterPage: true,
+                                            autoPlayAnimationDuration:
+                                                const Duration(
+                                                    milliseconds: 5000),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(15.0),
-                                        child: widget.productImages.isNotEmpty
-                                            ? Image.network(
-                                                widget.productImages[index],
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.asset(
-                                                'assets/images/mohandam_logo.jpg',
-                                                fit: BoxFit.cover,
-                                              )),
-                                  );
-                                },
-                                options: CarouselOptions(
-                                  height: 250,
-                                  autoPlay: true,
-                                  enableInfiniteScroll: true,
-                                  enlargeCenterPage: true,
-                                  autoPlayAnimationDuration:
-                                      const Duration(milliseconds: 5000),
+                                    // back icon
+                                    Positioned(
+                                      top: 20.0,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        icon: const CircleAvatar(
+                                          backgroundColor: Colors.white,
+                                          child: Icon(
+                                            Icons.arrow_back_ios,
+                                            color: Colors.black,
+                                            size: 22.0,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    // favorite icon
+                                    Positioned(
+                                      top: 20.0,
+                                      right: 5.0,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          _addAndRemoveFavorites(
+                                            widget.productId,
+                                            snapshot.data!['inFavorite'],
+                                          );
+                                        },
+                                        icon: CircleAvatar(
+                                          backgroundColor: Colors.white,
+                                          child: SvgPicture.asset(
+                                            'assets/icons/favorites_ic2.svg',
+                                            color: snapshot.data!['inFavorite']
+                                                ? Colors.orangeAccent
+                                                : Colors.black,
+                                            fit: BoxFit.cover,
+                                            height: 20.0,
+                                            width: 20.0,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ),
-                          ),
-                          // back icon
-                          Positioned(
-                            top: 45.0,
-                            child: IconButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              icon: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.black,
-                                size: 25.0,
-                              ),
-                            ),
-                          ),
-                          // favorite icon
-                          Positioned(
-                            top: 45.0,
-                            right: 5.0,
-                            child: IconButton(
-                              onPressed: () {
-                                _addAndRemoveFavorites(
-                                  widget.productId,
-                                  snapshot.data!.get('inFavorite'),
-                                );
-                              },
-                              icon: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                child: SvgPicture.asset(
-                                  'assets/icons/favorites_ic2.svg',
-                                  color: snapshot.data!.get('inFavorite')
-                                      ? Colors.orangeAccent
-                                      : Colors.black,
-                                  fit: BoxFit.cover,
-                                  height: 20.0,
-                                  width: 20.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        height: 530.0,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Theme(
-                          data: Theme.of(context).copyWith(
-                              colorScheme: ColorScheme.fromSwatch().copyWith(
-                                  secondary: const Color(0xff096f77))),
-                          child: ListView(
-                            padding:
-                                const EdgeInsets.only(top: 0.0, bottom: 10.0),
-                            children: [
-                              CustomText(
-                                text: widget.productTitle,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const RoundedShapeInfo(
-                                    title: 'Size',
-                                    content: CustomText(
-                                      text: 'XXL - X - M',
-                                      fontSize: 14,
+                                // title & product images
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CustomText(
+                                      text: snapshot.data!['title'],
+                                      fontSize: 22.0,
                                       fontWeight: FontWeight.bold,
-                                      alignment: Alignment.center,
                                     ),
-                                  ),
-                                  RoundedShapeInfo(
-                                    title: 'Color',
-                                    content: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          height: 20,
-                                          width: 20,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            color: const Color(0xffffc107),
-                                          ),
+                                    const Spacer(),
+                                    Flexible(
+                                      child: SizedBox(
+                                        height: 40.0,
+                                        child: ListView(
+                                          scrollDirection: Axis.horizontal,
+                                          children: [
+                                            MultiSelectContainer(
+                                              itemsPadding:
+                                                  const EdgeInsets.all(2.0),
+                                              itemsDecoration:
+                                                  MultiSelectDecorations(
+                                                decoration: BoxDecoration(
+                                                    color: MyColors.primary
+                                                        .withOpacity(0.4)),
+                                                selectedDecoration:
+                                                    BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      MyColors.primary,
+                                                      MyColors.primary
+                                                          .withOpacity(0.6)
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              items: List.generate(
+                                                  productImages.length,
+                                                  (int index) {
+                                                return MultiSelectCard(
+                                                  value: productImages[index],
+                                                  child: getChild(
+                                                      imagePath:
+                                                          productImages[index]),
+                                                );
+                                              }),
+                                              listViewSettings:
+                                                  const ListViewSettings(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                              ),
+                                              onChange:
+                                                  (List<dynamic> selectedItems,
+                                                      selectedItem) {
+                                                setState(() {
+                                                  selectedImages =
+                                                      selectedItems;
+                                                });
+                                                print(selectedItems);
+                                              },
+                                            ),
+                                          ],
                                         ),
-                                        const SizedBox(width: 3.0),
-                                        Container(
-                                          height: 20,
-                                          width: 20,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 3.0),
-                                        Container(
-                                          height: 20,
-                                          width: 20,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            color: Colors.lightBlue,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10.0),
-                                child: CustomText(
-                                  text: 'Details',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                  ],
                                 ),
+                                // subtitle & quantity
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const CustomText(
+                                        text: 'Details',
+                                        fontSize: 17.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      RoundedShapeInfo(
+                                        title: 'Quantity:',
+                                        content: snapshot.data!['quantity'],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                CustomText(
+                                  text: snapshot.data!['description'],
+                                  fontSize: 14.0,
+                                  height: 2.0,
+                                ),
+                                const SizedBox(height: 10.0),
+                                StreamBuilder<QuerySnapshot?>(
+                                    stream: _getSellerUid(),
+                                    builder: (context, snapshot) {
+                                      return snapshot.hasData
+                                          ? Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                            child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  CircleAvatar(
+                                                    radius: 23.0,
+                                                    backgroundColor: MyColors.primary,
+                                                    child: CircleAvatar(
+                                                      backgroundImage: NetworkImage(
+                                                        snapshot.data!.docs[0]
+                                                        ['sellerImg'] !=
+                                                            ''
+                                                            ? snapshot.data!.docs[0]
+                                                        ['sellerImg']
+                                                            : appLogo,
+                                                      ),
+                                                      radius: 22.0,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 10.0),
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      const CustomText(
+                                                        text: 'Seller',
+                                                        fontSize: 16.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            snapshot.data!.docs[0]
+                                                                ['sellerName'],
+                                                        fontSize: 16.0,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                          )
+                                          : Container();
+                                    }),
+                              ],
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: Color(0xff096f77),
                               ),
-                              CustomText(
-                                text: widget.productDescription,
-                                fontSize: 14.0,
-                                height: 2.0,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: Color(0xff096f77),
-                    ),
-                  );
-                }
-              },
-            ),
-            // Price & Buy section
-            Material(
-              elevation: 10,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 20.0,
-                ),
+                            );
+                          }
+                        })),
+              ),
+              // Price & Add section
+              Container(
+                height: 80.0,
+                color: Colors.white,
+                margin: const EdgeInsets.only(bottom: 50.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    // Price
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const CustomText(
                           text: 'PRICE',
-                          fontSize: 12,
+                          fontSize: 15.0,
                           color: Colors.grey,
                         ),
                         CustomText(
                           text: '\$${widget.productPrice}',
-                          fontSize: 18,
+                          fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xff096f77),
                         ),
                       ],
                     ),
                     // add button
-                    SizedBox(
-                      height: 60.0,
-                      width: 146.0,
-                      child: CustomButton(
-                        'ADD',
-                        () {
-                          _addProductToCart(
-                            productId: widget.productId,
-                            productImages: widget.productImages,
-                            productTitle: widget.productTitle,
-                            productPrice: widget.productPrice,
-                            productQuantity: widget.productQuantity,
-                          );
-                        },
-                      ),
-                    ),
+                    StreamBuilder<QuerySnapshot?>(
+                        stream: _getSellerUid(),
+                        builder: (context, snapshot) {
+                          return snapshot.hasData
+                              ? SizedBox(
+                                  height: 60.0,
+                                  width: 145.0,
+                                  child: snapshot.data!.docs[0]['sellerUid'] !=
+                                          _currentUser!.uid
+                                      ? CustomButton(
+                                          'ADD',
+                                          () {
+                                            _addProductToCart(
+                                              productId: widget.productId,
+                                              productImages:
+                                                  widget.productImages,
+                                              productTitle: widget.productTitle,
+                                              productPrice: widget.productPrice,
+                                              productQuantity:
+                                                  widget.productQuantity,
+                                              sellerUid: snapshot.data!.docs[0]
+                                                  ['sellerUid'],
+                                            );
+                                          },
+                                        )
+                                      : null,
+                                )
+                              : const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Color(0xff096f77),
+                                  ),
+                                );
+                        }),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -304,17 +404,19 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     required String productId,
     required String productPrice,
     required String productQuantity,
+    required String sellerUid,
   }) async {
     await _cartData
         .doc(_currentUser!.uid)
         .collection('cart')
         .doc(productId)
         .set({
-      'image': productImages,
+      'images': selectedImages,
       'title': productTitle,
       'price': productPrice,
       'quantity': productQuantity,
       'productId': productId,
+      'sellerUid': sellerUid,
     }).then((value) {
       print('-----------------------');
       print('$productTitle is added to your cart.');
@@ -322,8 +424,8 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: const Duration(seconds: 1),
-        backgroundColor: const Color(0xff096f77),
+        duration: const Duration(seconds: 2),
+        backgroundColor: MyColors.primary,
         content: SizedBox(
           height: 50.0,
           child: Text(
@@ -335,11 +437,21 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
       ),
     );
   }
+
+  Widget getChild({required String imagePath}) {
+    return SizedBox(
+      height: 30.0,
+      width: 30.0,
+      child: Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
 }
 
 class RoundedShapeInfo extends StatelessWidget {
-  final String title;
-  final Widget content;
+  final String title, content;
 
   const RoundedShapeInfo({
     Key? key,
@@ -351,22 +463,31 @@ class RoundedShapeInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 40,
-      width: 150,
+      width: 120,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade400),
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(25.0),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CustomText(
-              text: title,
-              fontSize: 14,
-              alignment: Alignment.center,
+            Flexible(
+              flex: 2,
+              child: CustomText(
+                text: title,
+                fontSize: 14.0,
+                alignment: Alignment.center,
+              ),
             ),
-            content,
+            Flexible(
+              child: CustomText(
+                text: content,
+                fontSize: 14.0,
+                alignment: Alignment.center,
+              ),
+            ),
           ],
         ),
       ),

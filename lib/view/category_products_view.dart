@@ -6,12 +6,12 @@ import 'package:handmade_store/view/product_details_view.dart';
 class CategoryProductsView extends StatefulWidget {
   const CategoryProductsView({
     Key? key,
-    // required this.categoryId,
     required this.categoryName,
+    required this.category,
   }) : super(key: key);
 
-  // final String categoryId;
   final String categoryName;
+  final String category;
 
   @override
   State<CategoryProductsView> createState() => _CategoryProductsViewState();
@@ -45,7 +45,7 @@ class _CategoryProductsViewState extends State<CategoryProductsView> {
       // recommended section
       body: StreamBuilder<QuerySnapshot?>(
         stream: _productsData
-            .where('category', isEqualTo: widget.categoryName)
+            .where('category', isEqualTo: widget.category)
             .snapshots(),
         builder:
             (BuildContext context, AsyncSnapshot<QuerySnapshot?> snapshot) {
@@ -80,18 +80,12 @@ class _CategoryProductsViewState extends State<CategoryProductsView> {
                             // navigate to product details screen.
                             navigatePush(context, ProductDetailsView(
                               productId: snapshot.data!.docs[index].id,
-                              productImages: snapshot.data!.docs[index]
-                              ['images'],
-                              productDescription: snapshot.data!.docs[index]
-                              ['description'],
-                              productPrice: snapshot.data!.docs[index]
-                              ['price'],
-                              productTitle: snapshot.data!.docs[index]
-                              ['title'],
-                              productInFavorite: snapshot.data!.docs[index]
-                              ['inFavorite'],
-                              productQuantity: snapshot.data!.docs[index]
-                              ['quantity'],
+                              productImages: snapshot.data!.docs[index]['images'],
+                              productDescription: snapshot.data!.docs[index]['description'],
+                              productPrice: snapshot.data!.docs[index]['price'],
+                              productTitle: snapshot.data!.docs[index]['title'],
+                              productInFavorite: snapshot.data!.docs[index]['inFavorite'],
+                              productQuantity: snapshot.data!.docs[index]['quantity'],
                             ));
                           },
                           child: Hero(
