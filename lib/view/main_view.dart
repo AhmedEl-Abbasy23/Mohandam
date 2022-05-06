@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:handmade_store/shared/functions.dart';
+import 'package:handmade_store/shared/my_colors.dart';
 import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/search_view.dart';
 import 'package:handmade_store/view/sell_product_view.dart';
@@ -118,13 +119,16 @@ class _MainViewState extends State<MainView> {
         ],
       ),
       floatingActionButton: _currentIndex == 0
-          ? FloatingActionButton(
-              child: Image.asset('assets/icons/sell_product_ic.png'),
+          ? FloatingActionButton.extended(
+              icon: const Icon(Icons.sell),
+                  label: Text(AppStrings.sell.tr(),style: const TextStyle(fontSize: 18.0),),
+
+              // child: Image.asset('assets/icons/sell_product_ic.png'),
               onPressed: () {
                 navigatePush(context, const SellProductView());
               },
-              backgroundColor: Colors.transparent,
-              elevation: 10.0,
+              backgroundColor: MyColors.primary,
+              elevation: 3.0,
             )
           : null,
     );

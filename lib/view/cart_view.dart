@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class CartView extends StatefulWidget {
 class _CartViewState extends State<CartView> {
   final _currentUser = FirebaseAuth.instance.currentUser;
   final CollectionReference _userData =
-  FirebaseFirestore.instance.collection('users');
+      FirebaseFirestore.instance.collection('users');
   final _productsData = FirebaseFirestore.instance.collection('products');
 
   _addAndRemoveFavorites(String productId) async {
@@ -40,7 +41,6 @@ class _CartViewState extends State<CartView> {
       }
     });
   }
-
 
   List<int> price = [];
 
@@ -135,47 +135,69 @@ class _CartViewState extends State<CartView> {
                               ],
                             ),
                             StreamBuilder<DocumentSnapshot>(
-                              stream: _userData.doc(_currentUser!.uid).snapshots(),
-                              builder: (context, userSnapshot) {
-                                return SizedBox(
-                                  height: 50.0,
-                                  width: 150.0,
-                                  child: ElevatedButton(
-                                          onPressed: () {
-                                            List.generate(
-                                                snapshot.data!.docs.length,
-                                                (int index) {
-                                              orderNow(
-                                                sellerUid: snapshot
-                                                    .data!.docs[index]['sellerUid'],
-                                                orderImages: [
-                                                  snapshot.data!.docs[index]
-                                                      .get('images')[0]
-                                                ],
-                                                productName: snapshot
-                                                    .data!.docs[index]['title'],
-                                                productPrice: snapshot
-                                                    .data!.docs[index]['price'],
-                                                // current user info
-                                                customerImage: userSnapshot.data!['imgUrl'],
-                                                customerName: userSnapshot.data!['name'],
-                                                customerPhone: userSnapshot.data!['mobileNumber'],
-                                                customerAddress: userSnapshot.data!['shippingAddress'],
-                                              );
-                                            });
-                                          },
-                                          child: Text(
-                                            AppStrings.orderNow.tr().toUpperCase(),
-                                            style: const TextStyle(fontSize: 16.0),
-                                          ),
-                                          style: ElevatedButton.styleFrom(
-                                            primary: const Color(0xff096f77),
-                                          ),
+                                stream: _userData
+                                    .doc(_currentUser!.uid)
+                                    .snapshots(),
+                                builder: (context, userSnapshot) {
+                                  return SizedBox(
+                                    height: 50.0,
+                                    width: 150.0,
+                                    child: ElevatedButton(
+                                      onPressed: userSnapshot
+                                                      .data!['mobileNumber'] ==
+                                                  '' ||
+                                              userSnapshot.data![
+                                                      'shippingAddress'] ==
+                                                  ''
+                                          ? () {
+                                        AwesomeDialog(
+                                          context: context,
+                                          dialogType: DialogType.NO_HEADER,
+                                          headerAnimationLoop: true,
+                                          animType: AnimType.BOTTOMSLIDE,
+                                          title: AppStrings.alert.tr(),
+                                          desc: AppStrings.updateYourInfo.tr(),
+                                          buttonsTextStyle: const TextStyle(color: Colors.white),
+                                          btnOkColor: const Color(0xff096f77),
+                                          showCloseIcon: false,
+                                          btnOkOnPress: () {},
+                                        ).show();
+                                            }
+                                          : () {
+                                              List.generate(
+                                                  snapshot.data!.docs.length,
+                                                  (int index) {
+                                                orderNow(
+                                                  sellerUid: snapshot.data!
+                                                      .docs[index]['sellerUid'],
+                                                  orderImages: [
+                                                    snapshot.data!.docs[index]
+                                                        .get('images')[0]
+                                                  ],
+                                                  productName: snapshot.data!
+                                                      .docs[index]['title'],
+                                                  productPrice: snapshot.data!
+                                                      .docs[index]['price'],
+                                                  // current user info
+                                                  customerName: userSnapshot
+                                                      .data!['name'],
+                                                  customerPhone: userSnapshot
+                                                      .data!['mobileNumber'],
+                                                  customerAddress: userSnapshot
+                                                      .data!['shippingAddress'],
+                                                );
+                                              });
+                                            },
+                                      child: Text(
+                                        AppStrings.orderNow.tr().toUpperCase(),
+                                        style: const TextStyle(fontSize: 16.0),
                                       ),
-                                );
-                              }
-                            ),
-
+                                      style: ElevatedButton.styleFrom(
+                                        primary: const Color(0xff096f77),
+                                      ),
+                                    ),
+                                  );
+                                }),
                           ],
                         ),
                       ),
@@ -193,7 +215,6 @@ class _CartViewState extends State<CartView> {
     required List orderImages,
     required String productName,
     required String productPrice,
-    required String customerImage,
     required String customerName,
     required String customerPhone,
     required String customerAddress,
@@ -217,7 +238,6 @@ class _CartViewState extends State<CartView> {
         'orderQuantity': '',
         // todo replace with product total quantity
         'customerUid': _currentUser!.uid,
-        'customerImage': customerImage,
         'customerName': customerName,
         'customerPhone': customerPhone,
         'customerAddress': customerAddress,

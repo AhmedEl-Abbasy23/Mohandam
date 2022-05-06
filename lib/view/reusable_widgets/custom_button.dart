@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:handmade_store/shared/my_colors.dart';
 import 'package:handmade_store/view/reusable_widgets/custom_text.dart';
 
 class CustomButton extends StatelessWidget {
@@ -12,14 +13,14 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: const Color(0xff096f77),
+        primary: MyColors.primary,
         elevation: 0,
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
       ),
       onPressed: onPressedFn,
       child: CustomText(
         text: text,
-        fontSize: 14,
+        fontSize: 16.0,
         color: Colors.white,
       ),
     );

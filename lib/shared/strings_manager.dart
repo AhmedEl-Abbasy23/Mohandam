@@ -100,4 +100,11 @@ class AppStrings {
   static const String myPurchases = "my_purchases";
   static const String myProducts = "my_products";
   static const String orders = "orders";
+  static const String customerName = "customer_name";
+  static const String customerNumber = "customer_number";
+  static const String customerAddress = "customer_shipping_address";
+  static const String orderRequiredQuantity = "order_required_quantity";
+  static const String orderTotalPrice = "order_total_price";
+  static const String updateYourInfo = "update_your_info";
+  static const String sell = "sell";
 }

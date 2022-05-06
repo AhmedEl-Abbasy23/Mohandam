@@ -99,5 +99,12 @@
   "choose_profile_picture": "Choose Profile Picture",
   "my_purchases": "My Purchases",
   "my_products": "My Products",
-  "orders": "Orders"
+  "orders": "Orders",
+  "customer_name": "Customer Name: ",
+  "customer_number": "Mobile Number: ",
+  "customer_shipping_address": "Shipping Address: ",
+  "order_required_quantity": "Required quantity: ",
+  "order_total_price": "Total Price: ",
+  "update_your_info": "Please go to your account settings to update your account information to complete the order.",
+  "sell": "Sell"
 }

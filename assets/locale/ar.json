@@ -99,5 +99,13 @@
   "choose_profile_picture": "اختيار صورة شخصية",
   "my_purchases": "مشترياتي",
   "my_products": "منتجاتي",
-  "orders": "الطلبات"
+  "orders": "الطلبات",
+  "customer_name": "اسم العميل: ",
+  "customer_number": "رقم الهاتف: ",
+  "customer_shipping_address": "عنوان الشحن: ",
+  "order_required_quantity": "الكمية المطلوبة: ",
+  "order_total_price": "السعر الكُلي: ",
+  "update_your_info": "يرجى التوجه إلى إعدادات حسابك لتحديث بياناتك لتتمكن من إكمال الطلب.",
+  "sell": "بيع"
+
 }

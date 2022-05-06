@@ -10,7 +10,7 @@ import 'package:handmade_store/view/favorites_view.dart';
 import 'package:handmade_store/view/login_view.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 
-import 'orders_view.dart';
+import 'listings_view.dart';
 
 class AccountView extends StatefulWidget {
   const AccountView({Key? key}) : super(key: key);
@@ -125,7 +125,7 @@ class _AccountViewState extends State<AccountView> {
                   leadingImg: 'assets/icons/orders_ic.svg',
                   title: AppStrings.listings.tr(),
                   onTap: () {
-                    navigatePush(context, OrdersView());
+                    navigatePush(context, ListingsView());
                   },
                 ),
                 const Divider(),
