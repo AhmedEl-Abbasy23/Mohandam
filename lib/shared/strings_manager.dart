@@ -38,7 +38,7 @@ class AppStrings {
   static const String orderNow = "order_now";
   static const String editProfile = "edit_profile";
   static const String favorites = "favorites";
-  static const String orders = "orders";
+  static const String listings = "listings";
   static const String changeLanguage = "lang";
   static const String logout = "logout";
   static const String sellProduct = "sell_product";
@@ -78,4 +78,26 @@ class AppStrings {
   static const String loading = "loading";
   static const String alert = "alert";
   static const String search = "search";
+  static const String details = "details";
+  static const String quantity = "quantity";
+  static const String seller = "seller";
+  static const String price = "price";
+  static const String add = "add";
+  static const String addToCart = "add_to_cart";
+  static const String egp = "egp";
+  static const String total = "total";
+  static const String updatingProfile = "updating_profile";
+  static const String mobileNumber = "mobile_number";
+  static const String pleaseEnterMobileNumber = "please_enter_mobile_number";
+  static const String invalidMobileNumber = "invalid_mobile_number";
+  static const String shippingAddress = "shipping_address";
+  static const String pleaseEnterShippingAddress = "please_enter_shipping_address";
+  static const String invalidShippingAddress = "invalid_shipping_address";
+  static const String updateProfile = "update_profile";
+  static const String galleryImport = "gallery_import";
+  static const String cameraImport = "camera_import";
+  static const String chooseProfilePicture = "choose_profile_picture";
+  static const String myPurchases = "my_purchases";
+  static const String myProducts = "my_products";
+  static const String orders = "orders";
 }

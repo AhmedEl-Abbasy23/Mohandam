@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:handmade_store/shared/cache_helper.dart';
 import 'package:handmade_store/shared/functions.dart';
 import 'package:handmade_store/shared/localization.dart';
 import 'package:handmade_store/shared/strings_manager.dart';
@@ -125,7 +123,7 @@ class _AccountViewState extends State<AccountView> {
                 const Divider(),
                 _getListTile(
                   leadingImg: 'assets/icons/orders_ic.svg',
-                  title: AppStrings.orders.tr(),
+                  title: AppStrings.listings.tr(),
                   onTap: () {
                     navigatePush(context, OrdersView());
                   },

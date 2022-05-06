@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:handmade_store/shared/my_colors.dart';
+import 'package:handmade_store/view/reusable_widgets/custom_text.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
+
+import '../../shared/strings_manager.dart';
 
 class CartProduct extends StatefulWidget {
   CartProduct({
@@ -18,19 +23,22 @@ class CartProduct extends StatefulWidget {
   final String image;
   final int quantity;
   int counter;
-  late int totalPrice;
+  int? totalPrice;
 
   @override
   State<CartProduct> createState() => _CartProductState();
 }
 
 class _CartProductState extends State<CartProduct> {
+
   @override
   Widget build(BuildContext context) {
     return Dismissible(
       secondaryBackground: Container(
         padding: const EdgeInsets.symmetric(horizontal: 40.0),
-        alignment: Alignment.centerRight,
+        alignment: translator.activeLanguageCode == 'en'
+            ? Alignment.centerRight
+            : Alignment.centerLeft,
         color: const Color(0xffff3d00),
         width: double.infinity,
         child: SvgPicture.asset(
@@ -42,8 +50,10 @@ class _CartProductState extends State<CartProduct> {
       ),
       background: Container(
         padding: const EdgeInsets.symmetric(horizontal: 40.0),
-        alignment: Alignment.centerLeft,
-        color: const Color(0xffffc107),
+        alignment: translator.activeLanguageCode == 'en'
+            ? Alignment.centerLeft
+            : Alignment.centerRight,
+        color: MyColors.yellow,
         width: double.infinity,
         child: SvgPicture.asset(
           'assets/icons/favorites_ic3.svg',
@@ -85,43 +95,57 @@ class _CartProductState extends State<CartProduct> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 8.0),
+                        const SizedBox(height: 5.0),
                         Text(
-                          widget.price.toString(),
+                          '${widget.price} ${AppStrings.egp.tr()}',
                           style: const TextStyle(
                             color: Color(0xff096f77),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 30.0),
+                        const SizedBox(height: 10.0),
                         // counter
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.zero,
-                            width: 80.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.0),
-                              color: Colors.grey.shade300,
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.zero,
+                              height: 30.0,
+                              width: 80.0,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: Colors.grey.shade300,
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _createIncrementDecrementButton(
+                                    Icons.add,
+                                    () {
+                                      _increment();
+                                    },
+                                  ),
+                                  Text(widget.counter.toString()),
+                                  _createIncrementDecrementButton(
+                                    Icons.remove,
+                                    () {
+                                      _decrement();
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                _createIncrementDecrementButton(
-                                  Icons.add,
-                                  () {
-                                    _increment();
-                                  },
-                                ),
-                                Text(widget.counter.toString()),
-                                _createIncrementDecrementButton(
-                                  Icons.remove,
-                                  () {
-                                    _decrement();
-                                  },
-                                ),
-                              ],
+                            const Spacer(),
+                            CustomText(
+                              text: '${AppStrings.total.tr()} ',
+                              fontSize: 13.0,
                             ),
-                          ),
+                            CustomText(
+                              text: '${widget.totalPrice ?? widget.price}',
+                              fontSize: 15.0,
+                              color: MyColors.darkPrimary,
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -137,7 +161,7 @@ class _CartProductState extends State<CartProduct> {
     if (widget.counter < widget.quantity) {
       setState(() {
         widget.counter++;
-        widget.totalPrice = widget.price *  widget.counter;
+        widget.totalPrice = widget.price * widget.counter;
       });
     }
   }
@@ -147,7 +171,7 @@ class _CartProductState extends State<CartProduct> {
       setState(() {
         {
           widget.counter--;
-          widget.totalPrice = widget.price *  widget.counter;
+          widget.totalPrice = widget.price * widget.counter;
         }
       });
     }

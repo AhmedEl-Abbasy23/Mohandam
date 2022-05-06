@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:handmade_store/shared/functions.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/product_details_view.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 
 class CategoryProductsView extends StatefulWidget {
   const CategoryProductsView({
@@ -129,7 +131,7 @@ class _CategoryProductsViewState extends State<CategoryProductsView> {
                                         ),
                                         const SizedBox(height: 8.0),
                                         Text(
-                                          '\$${snapshot.data!.docs[index]['price']}',
+                                          '${snapshot.data!.docs[index]['price']} ${AppStrings.egp.tr()}',
                                           style: const TextStyle(
                                             color: Color(0xff096f77),
                                           ),

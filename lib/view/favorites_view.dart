@@ -2,7 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:handmade_store/shared/functions.dart';
+import 'package:handmade_store/shared/my_colors.dart';
 import 'package:handmade_store/view/product_details_view.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
+
+import '../shared/strings_manager.dart';
 
 class FavoritesView extends StatefulWidget {
   const FavoritesView({Key? key}) : super(key: key);
@@ -28,9 +32,9 @@ class _FavoritesViewState extends State<FavoritesView> {
         elevation: 0.0,
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: const Text(
-          'Favorites',
-          style: TextStyle(fontSize: 24, color: Colors.black),
+        title: Text(
+          AppStrings.favorites.tr(),
+          style: const TextStyle(fontSize: 24, color: Colors.black),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
@@ -135,7 +139,7 @@ class _FavoritesViewState extends State<FavoritesView> {
                                             ),
                                             const SizedBox(height: 8.0),
                                             Text(
-                                              '\$${snapshot.data!.docs[index]['price']}',
+                                              '${snapshot.data!.docs[index]['price']} ${AppStrings.egp.tr()}',
                                               style: const TextStyle(
                                                 color: Color(0xff096f77),
                                               ),
@@ -181,7 +185,7 @@ class _FavoritesViewState extends State<FavoritesView> {
             );
           } else {
             return const Center(
-                child: CircularProgressIndicator(color: Color(0xff096f77)));
+                child: CircularProgressIndicator(color: MyColors.primary));
           }
         },
       ),

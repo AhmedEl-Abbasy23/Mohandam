@@ -21,7 +21,6 @@ class CustomButton extends StatelessWidget {
         text: text,
         fontSize: 14,
         color: Colors.white,
-        alignment: Alignment.center,
       ),
     );
   }

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,9 +37,9 @@ class _EditProfileState extends State<EditProfile> {
         elevation: 0.0,
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: const Text(
-          'Edit Profile',
-          style: TextStyle(fontSize: 24, color: Colors.black),
+        title:  Text(
+          AppStrings.editProfile.tr(),
+          style: const TextStyle(fontSize: 24, color: Colors.black),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
@@ -68,8 +70,8 @@ class _EditProfileState extends State<EditProfile> {
                             : NetworkImage(_appLogoUrl),
                       ),
                     ),
-                    const SizedBox(height: 20.0),
-                    const Text('Name'),
+                    const SizedBox(height: 15.0),
+                    Text(AppStrings.name.tr()),
                     TextFormField(
                       initialValue: snapshot.data!.get('name'),
                       cursorColor: const Color(0xff096f77),
@@ -79,9 +81,9 @@ class _EditProfileState extends State<EditProfile> {
                       },
                       validator: (String? value) {
                         if (value!.isEmpty) {
-                          return 'Please enter your name';
+                          return AppStrings.pleaseEnterName.tr();
                         } else if (value.length < 6) {
-                          return 'Invalid name';
+                          return AppStrings.invalidName.tr();
                         }
                         return null;
                       },
@@ -93,19 +95,20 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20.0),
-                    const Text('Mobile number'),
+                    const SizedBox(height: 15.0),
+                    Text(AppStrings.mobileNumber.tr()),
                     TextFormField(
                       initialValue: snapshot.data!.get('mobileNumber'),
                       cursorColor: const Color(0xff096f77),
+                      maxLength: 11,
                       onSaved: (String? value) {
                         mobileNumber = value;
                       },
                       validator: (String? value) {
                         if (value!.isEmpty) {
-                          return 'Please enter your mobile number';
-                        } else if (value.length < 11) {
-                          return 'Invalid mobile number';
+                          return AppStrings.pleaseEnterMobileNumber.tr();
+                        } else if (value.length != 11 ) {
+                          return AppStrings.invalidMobileNumber.tr();
                         }
                         return null;
                       },
@@ -117,21 +120,21 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20.0),
-                    const Text('Shipping address'),
+                    const SizedBox(height: 15.0),
+                    Text(AppStrings.shippingAddress.tr()),
                     TextFormField(
                       onSaved: (String? value) {
                         shippingAddress = value;
                       },
                       initialValue: snapshot.data!.get('shippingAddress'),
                       cursorColor: const Color(0xff096f77),
-                      maxLines: 3,
+                      maxLines: 2,
                       maxLength: 120,
                       validator: (String? value) {
                         if (value!.isEmpty) {
-                          return 'Please enter your address';
+                          return AppStrings.pleaseEnterShippingAddress.tr();
                         } else if (value.length < 6) {
-                          return 'Invalid address';
+                          return AppStrings.invalidShippingAddress.tr();
                         }
                         return null;
                       },
@@ -145,7 +148,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       height: 70,
-                      margin: const EdgeInsets.symmetric(vertical: 15.0),
+                      margin: const EdgeInsets.symmetric(vertical: 10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
@@ -160,16 +163,16 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.symmetric(vertical: 20.0),
+                      margin: const EdgeInsets.symmetric(vertical: 10.0),
                       height: 60.0,
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
                           _updateProfile(context, snapshot.data!.get('imgUrl'));
                         },
-                        child: const Text(
-                          'Update Profile',
-                          style: TextStyle(fontSize: 16.0),
+                        child:  Text(
+                          AppStrings.updateProfile.tr(),
+                          style: const TextStyle(fontSize: 16.0),
                         ),
                         style: ElevatedButton.styleFrom(
                           primary: const Color(0xff096f77),
@@ -221,7 +224,7 @@ class _EditProfileState extends State<EditProfile> {
                       color: Color(0xff096f77),
                       size: 30.0,
                     ),
-                    title: const Text('Import From Gallery', style: TextStyle(fontWeight: FontWeight.w600),),
+                    title: Text(AppStrings.galleryImport.tr(), style: const TextStyle(fontWeight: FontWeight.w600),),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
                       _pickImage(ImageSource.gallery);
@@ -234,7 +237,7 @@ class _EditProfileState extends State<EditProfile> {
                       color: Color(0xff096f77),
                       size: 30.0,
                     ),
-                    title: const Text('Import From Camera', style: TextStyle(fontWeight: FontWeight.w600),),
+                    title: Text(AppStrings.cameraImport.tr(), style: const  TextStyle(fontWeight: FontWeight.w600),),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
                       _pickImage(ImageSource.camera);
@@ -262,9 +265,9 @@ class _EditProfileState extends State<EditProfile> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-              'Choose Profile Picture',
-              style: TextStyle(fontSize: 18.0),
+           Text(
+              AppStrings.chooseProfilePicture.tr(),
+              style:const TextStyle(fontSize: 18.0),
             ),
           // show the picked image if it exists.
           Flexible(child: _pickedImageByUser(_file)),
@@ -291,7 +294,7 @@ class _EditProfileState extends State<EditProfile> {
             dialogType: DialogType.INFO,
             headerAnimationLoop: true,
             animType: AnimType.BOTTOMSLIDE,
-            title: 'Uploading product now ...',
+            title: AppStrings.updatingProfile.tr(),
             dismissOnBackKeyPress: false,
             dismissOnTouchOutside: false)
             .show()
@@ -312,7 +315,7 @@ class _EditProfileState extends State<EditProfile> {
             dialogType: DialogType.INFO,
             headerAnimationLoop: true,
             animType: AnimType.BOTTOMSLIDE,
-            title: 'Uploading product now ...',
+            title: 'Updating profile now ...',
             dismissOnBackKeyPress: false,
             dismissOnTouchOutside: false)
             .show()

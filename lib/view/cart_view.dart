@@ -18,7 +18,8 @@ class CartView extends StatefulWidget {
 
 class _CartViewState extends State<CartView> {
   final _currentUser = FirebaseAuth.instance.currentUser;
-  final _cartData = FirebaseFirestore.instance.collection('users');
+  final CollectionReference _userData =
+  FirebaseFirestore.instance.collection('users');
   final _productsData = FirebaseFirestore.instance.collection('products');
 
   _addAndRemoveFavorites(String productId) async {
@@ -28,13 +29,18 @@ class _CartViewState extends State<CartView> {
     print('Product in your favorite list now');
   }
 
-  _deleteCartProducts() async{
-    await _cartData.doc(_currentUser!.uid).collection('cart').get().then((snapshot) {
-      for(DocumentSnapshot ds in snapshot.docs){
+  _deleteCartProducts() async {
+    await _userData
+        .doc(_currentUser!.uid)
+        .collection('cart')
+        .get()
+        .then((snapshot) {
+      for (DocumentSnapshot ds in snapshot.docs) {
         ds.reference.delete();
       }
     });
   }
+
 
   List<int> price = [];
 
@@ -47,12 +53,12 @@ class _CartViewState extends State<CartView> {
           const EdgeInsets.only(right: 20.0, left: 20.0, top: 10.0, bottom: 0),
       child: StreamBuilder<QuerySnapshot?>(
           stream:
-              _cartData.doc(_currentUser!.uid).collection('cart').snapshots(),
+              _userData.doc(_currentUser!.uid).collection('cart').snapshots(),
           builder: (context, snapshot) {
             return snapshot.hasData
                 ? Column(
                     children: [
-                      // products
+                      // Products
                       Expanded(
                         flex: 12,
                         child: Theme(
@@ -88,7 +94,7 @@ class _CartViewState extends State<CartView> {
                                     _addAndRemoveFavorites(snapshot
                                         .data!.docs[index]['productId']);
                                   } else {
-                                    _cartData
+                                    _userData
                                         .doc(_currentUser!.uid)
                                         .collection('cart')
                                         .doc(snapshot.data!.docs[index].id)
@@ -100,7 +106,7 @@ class _CartViewState extends State<CartView> {
                           ),
                         ),
                       ),
-                      // order now
+                      // Buy now
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -116,10 +122,10 @@ class _CartViewState extends State<CartView> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const Expanded(
+                                Expanded(
                                   child: Text(
-                                    '\$0', // todo solve it.
-                                    style: TextStyle(
+                                    '0 ${AppStrings.egp.tr()}', // todo solve it.
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.0,
                                       color: Color(0xff096f77),
@@ -128,31 +134,48 @@ class _CartViewState extends State<CartView> {
                                 ),
                               ],
                             ),
-                            SizedBox(
-                              height: 50.0,
-                              width: 150.0,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  List.generate(snapshot.data!.docs.length,
-                                      (index) {
-                                    orderNow(
-                                      // todo pass an index instead of 0.
-                                      sellerUid: snapshot.data!.docs[index]['sellerUid'],
-                                      orderImages: [snapshot.data!.docs[index].get('images')[0]],
-                                      productName: snapshot.data!.docs[index]['title'],
-                                      productPrice: snapshot.data!.docs[index]['price'],
-                                    );
-                                  });
-                                },
-                                child:  Text(
-                                  AppStrings.orderNow.tr().toUpperCase(),
-                                  style: const TextStyle(fontSize: 16.0),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  primary: const Color(0xff096f77),
-                                ),
-                              ),
+                            StreamBuilder<DocumentSnapshot>(
+                              stream: _userData.doc(_currentUser!.uid).snapshots(),
+                              builder: (context, userSnapshot) {
+                                return SizedBox(
+                                  height: 50.0,
+                                  width: 150.0,
+                                  child: ElevatedButton(
+                                          onPressed: () {
+                                            List.generate(
+                                                snapshot.data!.docs.length,
+                                                (int index) {
+                                              orderNow(
+                                                sellerUid: snapshot
+                                                    .data!.docs[index]['sellerUid'],
+                                                orderImages: [
+                                                  snapshot.data!.docs[index]
+                                                      .get('images')[0]
+                                                ],
+                                                productName: snapshot
+                                                    .data!.docs[index]['title'],
+                                                productPrice: snapshot
+                                                    .data!.docs[index]['price'],
+                                                // current user info
+                                                customerImage: userSnapshot.data!['imgUrl'],
+                                                customerName: userSnapshot.data!['name'],
+                                                customerPhone: userSnapshot.data!['mobileNumber'],
+                                                customerAddress: userSnapshot.data!['shippingAddress'],
+                                              );
+                                            });
+                                          },
+                                          child: Text(
+                                            AppStrings.orderNow.tr().toUpperCase(),
+                                            style: const TextStyle(fontSize: 16.0),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            primary: const Color(0xff096f77),
+                                          ),
+                                      ),
+                                );
+                              }
                             ),
+
                           ],
                         ),
                       ),
@@ -170,23 +193,34 @@ class _CartViewState extends State<CartView> {
     required List orderImages,
     required String productName,
     required String productPrice,
+    required String customerImage,
+    required String customerName,
+    required String customerPhone,
+    required String customerAddress,
   }) async {
     final random = Random().nextInt(1500);
     var dateString = DateFormat.yMMMEd().format(DateTime.now());
-    _cartData.doc(_currentUser!.uid).collection('orders').add({
-      'title': 'ORDER -Code -$random\n$productName',
-      'orderType': 'Buy',
+    _userData.doc(_currentUser!.uid).collection('Listings').add({
+      'title': 'ORDER Code-$random\n$productName',
+      'orderType': 'My Purchases',
       'orderTime': dateString,
       'status': 'In Transit',
       'totalPrice': productPrice,
       'orderImages': orderImages,
     }).then((value) {
-      _cartData.doc(sellerUid).collection('orders').add({
-        'title': 'REQUEST -Code -$random\n$productName',
-        'orderType': 'Requests',
+      _userData.doc(sellerUid).collection('Listings').add({
+        'title': 'REQUEST Code-$random\n$productName',
+        'orderType': 'Orders',
         'orderTime': dateString,
         'totalPrice': productPrice,
+        // todo replace with product total price
+        'orderQuantity': '',
+        // todo replace with product total quantity
         'customerUid': _currentUser!.uid,
+        'customerImage': customerImage,
+        'customerName': customerName,
+        'customerPhone': customerPhone,
+        'customerAddress': customerAddress,
         'orderImages': orderImages,
       });
       _deleteCartProducts();

@@ -256,7 +256,7 @@ class _LoginViewState extends State<LoginView> {
                         "name": credential.user!.displayName,
                         'uid': credential.user!.uid,
                         'signInMethod': 'facebook account',
-                        'mobileNumber': credential.user!.phoneNumber ?? '+2',
+                        'mobileNumber': credential.user!.phoneNumber ?? '',
                         'imgUrl': '',
                         'shippingAddress': '',
                       });
@@ -310,7 +310,7 @@ class _LoginViewState extends State<LoginView> {
                         "name": credential.user!.displayName,
                         'uid': credential.user!.uid,
                         'signInMethod': 'google account',
-                        'mobileNumber': credential.user!.phoneNumber ?? '+2',
+                        'mobileNumber': credential.user!.phoneNumber ?? '',
                         'imgUrl': '',
                         'shippingAddress': '',
                       });

@@ -1,12 +1,15 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:handmade_store/shared/my_colors.dart';
+import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/reusable_widgets/custom_button.dart';
 import 'package:handmade_store/view/reusable_widgets/custom_text.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 
 class ProductDetailsView extends StatefulWidget {
   const ProductDetailsView({
@@ -46,6 +49,9 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
   final String appLogo =
       'https://firebasestorage.googleapis.com/v0/b/handmade-49991.appspot.com/o/mohandam_logo.jpg?alt=media&token=15f1d4be-0af1-47f1-b66f-a5b4d0ed903f';
 
+  _getProductDetails() {
+    return _productsData.doc(widget.productId).snapshots();
+  }
   _getSellerUid() {
     return _productsData
         .doc(widget.productId)
@@ -73,23 +79,22 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
               Expanded(
                 child: SingleChildScrollView(
                     child: StreamBuilder<DocumentSnapshot>(
-                        stream: _productsData.doc(widget.productId).snapshots(),
+                        stream: _getProductDetails(),
                         builder: (BuildContext context, snapshot) {
                           List productImages = snapshot.data!['images'];
                           if (snapshot.hasData) {
                             return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // images & buttons
-                                Stack(
-                                  alignment: Alignment.centerLeft,
-                                  children: [
-                                    // product images section
-                                    Hero(
-                                      tag: widget.productId,
-                                      child: Container(
-                                        margin:
-                                            const EdgeInsets.only(top: 20.0),
-                                        height: 250.0,
+                                Container(
+                                  margin: const EdgeInsets.only(top: 20.0),
+                                  height: 320.0,
+                                  child: Stack(
+                                    children: [
+                                      // product images section
+                                      Hero(
+                                        tag: widget.productId,
                                         child: CarouselSlider.builder(
                                           itemCount:
                                               snapshot.data!['images'].length,
@@ -121,7 +126,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                             );
                                           },
                                           options: CarouselOptions(
-                                            height: 230,
+                                            height: 300,
                                             autoPlay: true,
                                             enableInfiniteScroll: true,
                                             enlargeCenterPage: true,
@@ -131,50 +136,50 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    // back icon
-                                    Positioned(
-                                      top: 20.0,
-                                      child: IconButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        icon: const CircleAvatar(
-                                          backgroundColor: Colors.white,
-                                          child: Icon(
-                                            Icons.arrow_back_ios,
-                                            color: Colors.black,
-                                            size: 22.0,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          // back icon
+                                          IconButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            icon: const CircleAvatar(
+                                              backgroundColor: Colors.white,
+                                              child: Icon(
+                                                Icons.arrow_back_ios,
+                                                color: Colors.black,
+                                                size: 22.0,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                    // favorite icon
-                                    Positioned(
-                                      top: 20.0,
-                                      right: 5.0,
-                                      child: IconButton(
-                                        onPressed: () {
-                                          _addAndRemoveFavorites(
-                                            widget.productId,
-                                            snapshot.data!['inFavorite'],
-                                          );
-                                        },
-                                        icon: CircleAvatar(
-                                          backgroundColor: Colors.white,
-                                          child: SvgPicture.asset(
-                                            'assets/icons/favorites_ic2.svg',
-                                            color: snapshot.data!['inFavorite']
-                                                ? Colors.orangeAccent
-                                                : Colors.black,
-                                            fit: BoxFit.cover,
-                                            height: 20.0,
-                                            width: 20.0,
+                                          // favorite icon
+                                          IconButton(
+                                            onPressed: () {
+                                              _addAndRemoveFavorites(
+                                                widget.productId,
+                                                snapshot.data!['inFavorite'],
+                                              );
+                                            },
+                                            icon: CircleAvatar(
+                                              backgroundColor: Colors.white,
+                                              child: SvgPicture.asset(
+                                                'assets/icons/favorites_ic2.svg',
+                                                color:
+                                                    snapshot.data!['inFavorite']
+                                                        ? Colors.orangeAccent
+                                                        : Colors.black,
+                                                fit: BoxFit.cover,
+                                                height: 20.0,
+                                                width: 20.0,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                                 // title & product images
                                 Row(
@@ -217,9 +222,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                                   (int index) {
                                                 return MultiSelectCard(
                                                   value: productImages[index],
-                                                  child: getChild(
-                                                      imagePath:
-                                                          productImages[index]),
+                                                  child: getChild(imagePath: productImages[index]),
                                                 );
                                               }),
                                               listViewSettings:
@@ -227,12 +230,9 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                                 scrollDirection:
                                                     Axis.horizontal,
                                               ),
-                                              onChange:
-                                                  (List<dynamic> selectedItems,
-                                                      selectedItem) {
+                                              onChange: (List<dynamic> selectedItems, selectedItem) {
                                                 setState(() {
-                                                  selectedImages =
-                                                      selectedItems;
+                                                  selectedImages = selectedItems;
                                                 });
                                                 print(selectedItems);
                                               },
@@ -250,13 +250,13 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const CustomText(
-                                        text: 'Details',
-                                        fontSize: 17.0,
-                                        fontWeight: FontWeight.bold,
+                                      CustomText(
+                                        text: AppStrings.details.tr(),
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                       RoundedShapeInfo(
-                                        title: 'Quantity:',
+                                        title: AppStrings.quantity.tr(),
                                         content: snapshot.data!['quantity'],
                                       ),
                                     ],
@@ -264,57 +264,59 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                 ),
                                 CustomText(
                                   text: snapshot.data!['description'],
+                                  textAlign: TextAlign.start,
                                   fontSize: 14.0,
                                   height: 2.0,
                                 ),
-                                const SizedBox(height: 10.0),
+                                const SizedBox(height: 20.0),
                                 StreamBuilder<QuerySnapshot?>(
                                     stream: _getSellerUid(),
                                     builder: (context, snapshot) {
                                       return snapshot.hasData
                                           ? Padding(
-                                            padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                            child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 5.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 children: [
                                                   CircleAvatar(
-                                                    radius: 23.0,
-                                                    backgroundColor: MyColors.primary,
+                                                    radius: 26.0,
+                                                    backgroundColor:
+                                                        MyColors.primary,
                                                     child: CircleAvatar(
-                                                      backgroundImage: NetworkImage(
-                                                        snapshot.data!.docs[0]
-                                                        ['sellerImg'] !=
-                                                            ''
-                                                            ? snapshot.data!.docs[0]
-                                                        ['sellerImg']
+                                                      backgroundImage:
+                                                          NetworkImage(
+                                                        snapshot.data!.docs[0]['sellerImg'] != ''
+                                                            ? snapshot.data!.docs[0]['sellerImg']
                                                             : appLogo,
                                                       ),
-                                                      radius: 22.0,
+                                                      radius: 25.0,
                                                     ),
                                                   ),
                                                   const SizedBox(width: 10.0),
                                                   Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      const CustomText(
-                                                        text: 'Seller',
+                                                      CustomText(
+                                                        text: AppStrings.seller
+                                                            .tr(),
                                                         fontSize: 16.0,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                       ),
                                                       CustomText(
-                                                        text:
-                                                            snapshot.data!.docs[0]
-                                                                ['sellerName'],
+                                                        text: snapshot.data!.docs[0]['sellerName'],
                                                         fontSize: 16.0,
-                                                        fontWeight:
-                                                            FontWeight.w500,
+                                                        fontWeight: FontWeight.w500,
                                                       ),
                                                     ],
                                                   ),
                                                 ],
                                               ),
-                                          )
+                                            )
                                           : Container();
                                     }),
                               ],
@@ -341,45 +343,48 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CustomText(
-                          text: 'PRICE',
+                        CustomText(
+                          text: AppStrings.price.tr().toUpperCase(),
                           fontSize: 15.0,
                           color: Colors.grey,
                         ),
                         CustomText(
-                          text: '\$${widget.productPrice}',
+                          text: '${widget.productPrice} ${AppStrings.egp.tr()}',
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xff096f77),
+                          color: MyColors.primary,
                         ),
                       ],
                     ),
                     // add button
                     StreamBuilder<QuerySnapshot?>(
                         stream: _getSellerUid(),
-                        builder: (context, snapshot) {
-                          return snapshot.hasData
+                        builder: (context, sellerSnapshot) {
+                          return sellerSnapshot.hasData
                               ? SizedBox(
                                   height: 60.0,
                                   width: 145.0,
-                                  child: snapshot.data!.docs[0]['sellerUid'] !=
+                                  child: sellerSnapshot.data!.docs[0]['sellerUid'] !=
                                           _currentUser!.uid
-                                      ? CustomButton(
-                                          'ADD',
-                                          () {
-                                            _addProductToCart(
-                                              productId: widget.productId,
-                                              productImages:
-                                                  widget.productImages,
-                                              productTitle: widget.productTitle,
-                                              productPrice: widget.productPrice,
-                                              productQuantity:
-                                                  widget.productQuantity,
-                                              sellerUid: snapshot.data!.docs[0]
-                                                  ['sellerUid'],
+                                      ? StreamBuilder<DocumentSnapshot>(
+                                        stream: _getProductDetails(),
+                                        builder: (context, snapshot) {
+
+                                          return CustomButton(
+                                              AppStrings.add.tr().toUpperCase(),
+                                              () {
+                                                _addProductToCart(
+                                                  productId: widget.productId,
+                                                  productImages: snapshot.data!['images'],
+                                                  productTitle: snapshot.data!['title'],
+                                                  productPrice: snapshot.data!['price'],
+                                                  productQuantity:snapshot.data!['quantity'],
+                                                  sellerUid: sellerSnapshot.data!.docs[0]['sellerUid'],
+                                                );
+                                              },
                                             );
-                                          },
-                                        )
+                                        }
+                                      )
                                       : null,
                                 )
                               : const Center(
@@ -399,7 +404,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
   }
 
   _addProductToCart({
-    required List productImages,
+    required List<dynamic> productImages,
     required String productTitle,
     required String productId,
     required String productPrice,
@@ -411,7 +416,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
         .collection('cart')
         .doc(productId)
         .set({
-      'images': selectedImages,
+      'images': selectedImages.isNotEmpty ? selectedImages : productImages,
       'title': productTitle,
       'price': productPrice,
       'quantity': productQuantity,
@@ -427,9 +432,9 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
         duration: const Duration(seconds: 2),
         backgroundColor: MyColors.primary,
         content: SizedBox(
-          height: 50.0,
+          height: 30.0,
           child: Text(
-            '"$productTitle" has been added to your cart successfully',
+            '"$productTitle" ${AppStrings.addToCart.tr()}',
             textAlign: TextAlign.start,
             style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
           ),
@@ -462,30 +467,29 @@ class RoundedShapeInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 40,
-      width: 120,
+      height: 40.0,
+      width: 115.0,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade400),
+        border: Border.all(color: MyColors.primary.withOpacity(0.4)),
         borderRadius: BorderRadius.circular(25.0),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Flexible(
               flex: 2,
               child: CustomText(
                 text: title,
-                fontSize: 14.0,
-                alignment: Alignment.center,
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
               ),
             ),
             Flexible(
               child: CustomText(
                 text: content,
-                fontSize: 14.0,
-                alignment: Alignment.center,
+                fontSize: 15.0,
               ),
             ),
           ],

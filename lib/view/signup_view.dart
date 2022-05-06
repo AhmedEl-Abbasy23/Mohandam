@@ -155,7 +155,7 @@ class _SignUpViewState extends State<SignUpView> {
                             "email": _emailController.text,
                             "uid": user.user!.uid,
                             'signInMethod': 'email & password',
-                            'mobileNumber': '+2',
+                            'mobileNumber': '',
                             'imgUrl': '',
                             'shippingAddress': '',
                           });

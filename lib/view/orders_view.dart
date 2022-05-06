@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:handmade_store/view/reusable_widgets/custom_button.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
+
+import '../shared/strings_manager.dart';
 
 class OrdersView extends StatelessWidget {
   OrdersView({Key? key}) : super(key: key);
@@ -13,7 +16,7 @@ class OrdersView extends StatelessWidget {
   Stream<QuerySnapshot<Map<String, dynamic>>> _getOrders(String orderType) {
     return _ordersData
         .doc(_currentUser!.uid)
-        .collection('orders')
+        .collection('Listings')
         .where('orderType', isEqualTo: orderType)
         .snapshots();
   }
@@ -32,9 +35,9 @@ class OrdersView extends StatelessWidget {
           elevation: 0.0,
           backgroundColor: Colors.white,
           centerTitle: true,
-          title: const Text(
-            'Orders',
-            style: TextStyle(fontSize: 24, color: Colors.black),
+          title: Text(
+            AppStrings.listings.tr(),
+            style: const TextStyle(fontSize: 24, color: Colors.black),
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
@@ -43,38 +46,37 @@ class OrdersView extends StatelessWidget {
             },
           ),
           iconTheme: const IconThemeData(color: Colors.black),
-          bottom: const TabBar(
-            indicatorColor: Color(0xff096f77),
-            labelColor: Color(0xff096f77),
-            labelStyle: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            unselectedLabelStyle: TextStyle(fontSize: 16.0),
+          bottom: TabBar(
+            indicatorColor: const Color(0xff096f77),
+            labelColor: const Color(0xff096f77),
+            labelStyle:
+            TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: translator.activeLanguageCode == 'en'?'SFP-REGULAR':"CairoRegular"),
+            unselectedLabelStyle: TextStyle(fontSize: 16.0, fontFamily: translator.activeLanguageCode == 'en'?'SFP-REGULAR':"CairoRegular"),
             tabs: [
-              Tab(child: Text('Buy')),
-              Tab(child: Text('Sell')),
+              Tab(child: Text(AppStrings.myPurchases.tr())),
+              Tab(child: Text(AppStrings.myProducts.tr())),
               Tab(
                   child: Text(
-                'Requests',
-                style: TextStyle(color: Color(0x99096f77)),
+                AppStrings.orders.tr(),
+                style: TextStyle(color: const Color(0x99096f77), fontFamily: translator.activeLanguageCode == 'en'?'SFP-REGULAR':"CairoRegular"),
               )),
             ],
           ),
         ),
         body: Theme(
           data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.fromSwatch()
-                  .copyWith(secondary: const Color(0xff096f77))),
+              colorScheme: ColorScheme.fromSwatch().copyWith(secondary: const Color(0xff096f77))),
           child: TabBarView(
             children: [
-              // Buy
+              // My Purchases
               Theme(
                 data: Theme.of(context).copyWith(
-                    colorScheme: ColorScheme.fromSwatch()
-                        .copyWith(secondary: const Color(0xff096f77))),
+                    colorScheme: ColorScheme.fromSwatch().copyWith(secondary: const Color(0xff096f77))),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 20.0, horizontal: 20.0),
                   child: StreamBuilder<QuerySnapshot?>(
-                      stream: _getOrders('Buy'),
+                      stream: _getOrders('My Purchases'),
                       builder: (context, snapshot) {
                         return snapshot.hasData
                             ? ListView.builder(
@@ -93,12 +95,10 @@ class OrdersView extends StatelessWidget {
                                         ),
                                       ),
                                       Card(
-                                        margin: const EdgeInsets.symmetric(
-                                            vertical: 15.0),
-                                        elevation: 3.0,
+                                        margin: const EdgeInsets.symmetric(vertical: 15.0),
+                                        elevation: 5.0,
                                         child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 15.0, horizontal: 20.0),
+                                          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                                           height: 180.0,
                                           width: double.infinity,
                                           decoration: BoxDecoration(
@@ -115,58 +115,56 @@ class OrdersView extends StatelessWidget {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      snapshot.data!.docs[index]
-                                                          ['title'],
-                                                      style: const TextStyle(
-                                                          fontSize: 20.0),
-                                                    ),
-                                                    const SizedBox(
-                                                        height: 10.0),
-                                                    Text(
-                                                      '\$${snapshot.data!.docs[index]['totalPrice']}',
-                                                      style: const TextStyle(
-                                                        fontSize: 20.0,
-                                                        color:
-                                                            Color(0xff096f77),
+                                                    Flexible(
+                                                      child: Text(
+                                                        snapshot.data!.docs[index]
+                                                            ['title'],
+                                                        style: const TextStyle(
+                                                            fontSize: 18.0),
                                                       ),
                                                     ),
                                                     const SizedBox(
-                                                        height: 35.0),
-                                                    Flexible(
-                                                      child: Container(
-                                                        height: 50.0,
-                                                        width: 125.0,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: snapshot.data!
-                                                                              .docs[
-                                                                          index]
-                                                                      [
-                                                                      'status'] ==
-                                                                  'In Transit'
-                                                              ? const Color(
-                                                                  0xffffc107)
-                                                              : const Color(
-                                                                  0xff096f77),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      5.0),
-                                                        ),
-                                                        child: Text(
-                                                          snapshot.data!
-                                                                  .docs[index]
-                                                              ['status'],
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            fontSize: 20.0,
-                                                          ),
+                                                        height: 5.0),
+                                                    Text(
+                                                      '\$${snapshot.data!.docs[index]['totalPrice']}',
+                                                      style: const TextStyle(
+                                                        fontSize: 18.0,
+                                                        color: Color(0xff096f77),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 5.0),
+                                                    Container(
+                                                      height: 40.0,
+                                                      width: 125.0,
+                                                      alignment:
+                                                          Alignment.center,
+                                                      decoration:
+                                                          BoxDecoration(
+                                                        color: snapshot.data!
+                                                                            .docs[
+                                                                        index]
+                                                                    [
+                                                                    'status'] ==
+                                                                'In Transit'
+                                                            ? const Color(
+                                                                0xffffc107)
+                                                            : const Color(
+                                                                0xff096f77),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    5.0),
+                                                      ),
+                                                      child: Text(
+                                                        snapshot.data!
+                                                                .docs[index]
+                                                            ['status'],
+                                                        style:
+                                                            const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 20.0,
                                                         ),
                                                       ),
                                                     ),
@@ -195,7 +193,7 @@ class OrdersView extends StatelessWidget {
                       }),
                 ),
               ),
-              // Sell
+              // My Products
               Theme(
                 data: Theme.of(context).copyWith(
                     colorScheme: ColorScheme.fromSwatch()
@@ -284,7 +282,7 @@ class OrdersView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       vertical: 20.0, horizontal: 20.0),
                   child: StreamBuilder<QuerySnapshot?>(
-                      stream: _getOrders('Requests'),
+                      stream: _getOrders('Orders'),
                       builder: (context, snapshot) {
                         return snapshot.hasData
                             ? ListView.builder(

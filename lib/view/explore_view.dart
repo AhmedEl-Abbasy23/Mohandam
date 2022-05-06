@@ -252,7 +252,7 @@ class _ExploreViewState extends State<ExploreView> {
                                             ),
                                             const SizedBox(height: 8.0),
                                             Text(
-                                              '\$${snapshot.data!.docs[index]['price']}',
+                                              '${snapshot.data!.docs[index]['price']} ${AppStrings.egp.tr()}',
                                               style: const TextStyle(
                                                 color: Color(0xff096f77),
                                               ),
