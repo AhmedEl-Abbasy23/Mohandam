@@ -28,7 +28,7 @@ class _SellProductViewState extends State<SellProductView> {
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> categories = [
       DropdownMenuItem(child: Text(AppStrings.accessories.tr()), value: "Accessories"),
-      DropdownMenuItem(child: Text(AppStrings.jewelery.tr()), value: "Jewelery"),
+      DropdownMenuItem(child: Text(AppStrings.jewelery.tr()), value: "Jewelry"),
       DropdownMenuItem(child: Text(AppStrings.antiques.tr()), value: "Antiques"),
       DropdownMenuItem(child: Text(AppStrings.glass.tr()), value: "Glass"),
       DropdownMenuItem(child: Text(AppStrings.pottery.tr()), value: "Pottery"),
