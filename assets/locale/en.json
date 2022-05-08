@@ -42,6 +42,7 @@
   "listings": "Listings",
   "logout": "Logout",
   "sell_product": "Sell a product",
+  "edit_product": "Edit a product",
   "product_category": "Product Category",
   "choose_category": "Choose Category",
   "product_images": "Product Images",
@@ -106,5 +107,11 @@
   "order_required_quantity": "Required quantity: ",
   "order_total_price": "Total Price: ",
   "update_your_info": "Please go to your account settings to update your account information to complete the order.",
-  "sell": "Sell"
+  "sell": "Sell",
+  "delete_product": "Delete Product",
+  "update_product": "Update Product",
+  "confirm_delete_product": "Are you sure to delete the product?",
+  "yes": "Yes",
+  "cancel": "Cancel",
+  "updating_product":"Updating product now ..."
 }

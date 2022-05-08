@@ -5,6 +5,7 @@ import 'package:handmade_store/shared/functions.dart';
 import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/product_details_view.dart';
 import 'package:handmade_store/view/reusable_widgets/custom_text.dart';
+import 'package:handmade_store/view/reusable_widgets/product_item.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 
 class SearchView extends StatefulWidget {
@@ -132,58 +133,11 @@ class _SearchViewState extends State<SearchView> {
                                 },
                                 child: Hero(
                                   tag: snapshot.data!.docs[index].id,
-                                  child: Card(
-                                    elevation: 5.0,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Image.network(
-                                            snapshot.data!.docs[index]['images']
-                                                [0],
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                          ),
-                                        ),
-                                        // title - subtitle - price
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 5.0, vertical: 2.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                snapshot.data!.docs[index]
-                                                    ['title'],
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 2.0),
-                                              Text(
-                                                snapshot.data!.docs[index]
-                                                    ['subtitle'],
-                                                maxLines: 2,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w300,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8.0),
-                                              Text(
-                                                '\$${snapshot.data!.docs[index]['price']}',
-                                                style: const TextStyle(
-                                                  color: Color(0xff096f77),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                  child: ProductItem(
+                                    imgUrl: snapshot.data!.docs[index]['images'][0],
+                                    title: snapshot.data!.docs[index]['title'],
+                                    description: snapshot.data!.docs[index]['description'],
+                                    price: snapshot.data!.docs[index]['price'],
                                   ),
                                 ),
                               );

@@ -1,12 +1,10 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:handmade_store/shared/cache_helper.dart';
 import 'package:handmade_store/shared/localization.dart';
 import 'package:handmade_store/shared/responsive.dart';
-import 'package:handmade_store/view/onboarding_view.dart';
 import 'package:handmade_store/view/splash_view.dart';
-import 'package:handmade_store/view/verification_view.dart';
+import 'package:intl/intl.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 
 void main() async {
@@ -27,13 +25,9 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: translator.delegates,
       // Android + iOS Delegates
       locale: translator.activeLocale,
-      // Device preview
-      // useInheritedMediaQuery: true,
-      // locale: DevicePreview.locale(context),
       // Active locale
       supportedLocales: translator.locals(),
       // Locals list
-      // home: OnBoardingScreen(),
       home: const SplashView(),
       theme: ThemeData(fontFamily: translator.activeLanguageCode == 'en'?'SFP-REGULAR':"CairoSemiBold"),
       builder: (context, widget) => MyResponsive.responsiveSetup(widget),

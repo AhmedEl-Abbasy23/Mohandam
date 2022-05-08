@@ -78,7 +78,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
               // Product section
               Expanded(
                 child: SingleChildScrollView(
-                    child: StreamBuilder<DocumentSnapshot>(
+                    child: StreamBuilder<DocumentSnapshot?>(
                         stream: _getProductDetails(),
                         builder: (BuildContext context, snapshot) {
                           List productImages = snapshot.data!['images'];

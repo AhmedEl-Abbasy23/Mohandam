@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:handmade_store/shared/my_colors.dart';
 import 'package:handmade_store/shared/strings_manager.dart';
+import 'package:intl/intl.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -40,13 +41,11 @@ class _SellProductViewState extends State<SellProductView> {
       DropdownMenuItem(child: Text(AppStrings.leathers.tr()), value: "Leathers"),
       DropdownMenuItem(child: Text(AppStrings.macrame.tr()), value: "Macrame"),
       DropdownMenuItem(child: Text(AppStrings.gifts.tr()), value: "Gifts"),
-      // DropdownMenuItem(child: Text("General"), value: "general"),
     ];
     return categories;
   }
 
   var _productTitle,
-      _productSubtitle,
       _productCategory = 'Recommended',
       _productDescription,
       _productPrice,
@@ -201,7 +200,7 @@ class _SellProductViewState extends State<SellProductView> {
                                       ),
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 16.0,
+                                        fontSize: translator.activeLanguageCode == 'en'? 16.0 : 14.0,
                                         color: Colors.white,
                                         fontFamily: translator.activeLanguageCode == 'en'?'SFP-REGULAR':"CairoRegular",
                                       ),
@@ -289,36 +288,13 @@ class _SellProductViewState extends State<SellProductView> {
                           ),
                         ),
                         const SizedBox(height: 20.0),
-                        Text(AppStrings.productSubtitle.tr()),
-                        TextFormField(
-                          cursorColor: const Color(0xff096f77),
-                          onSaved: (String? value) {
-                            _productSubtitle = value;
-                          },
-                          validator: (String? value) {
-                            if (value!.isEmpty) {
-                              return AppStrings.pleaseEnterProductSubtitle.tr();
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.text,
-                          maxLength: 35,
-                          decoration: const InputDecoration(
-                            // on open form
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff096f77)),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20.0),
                         Text(AppStrings.productDescription.tr()),
                         TextFormField(
                           onSaved: (String? value) {
                             _productDescription = value;
                           },
-                          // initialValue: snapshot.data!.get('shippingAddress'),
                           cursorColor: const Color(0xff096f77),
-                          maxLines: 5,
+                          maxLines: 3,
                           maxLength: 800,
                           validator: (String? value) {
                             if (value!.isEmpty) {
@@ -473,16 +449,17 @@ class _SellProductViewState extends State<SellProductView> {
           });
         }
         if (_imagesUrls.length == _images.length) {
+          var dateString = DateFormat.d().format(DateTime.now()) + DateFormat.Hms().format(DateTime.now());
           _productsData.add({
             'category': _currentCategory ?? _productCategory,
             'description': _productDescription,
             'price': _productPrice,
             'title': _productTitle,
-            'subtitle': _productSubtitle,
             'quantity': _productQuantity,
             'images': _imagesUrls,
             'inFavorite': false,
             'sellerUid': _currentUser.uid,
+            'uploadTime': int.parse(dateString.replaceAll(':','')),
           }).then((value) async {
             // to upload seller information inside product.
             print(value.id);

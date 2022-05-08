@@ -44,8 +44,6 @@ class _CartViewState extends State<CartView> {
 
   List<int> price = [];
 
-  int _currentCount = 1;
-
   @override
   Widget build(BuildContext context) {
     return Padding(

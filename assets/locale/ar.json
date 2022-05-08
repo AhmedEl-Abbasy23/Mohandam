@@ -42,6 +42,7 @@
   "listings": "القوائم",
   "logout": "تسجيل الخروج",
   "sell_product": "بيع منتج",
+  "edit_product": "تعديل منتج",
   "product_category": "فئة المنتج",
   "choose_category": "الفئة",
   "product_images": "صور المنتج",
@@ -106,6 +107,11 @@
   "order_required_quantity": "الكمية المطلوبة: ",
   "order_total_price": "السعر الكُلي: ",
   "update_your_info": "يرجى التوجه إلى إعدادات حسابك لتحديث بياناتك لتتمكن من إكمال الطلب.",
-  "sell": "بيع"
-
+  "sell": "بيع",
+  "delete_product": "حذف المنتج",
+  "update_product": "تعديل المنتج",
+  "confirm_delete_product": "هل أنت متأكد من حذف المنتج؟",
+  "yes": "نعم",
+  "cancel": "إلغاء",
+  "updating_product": "جاري تحديث المنتج الآن ..."
 }

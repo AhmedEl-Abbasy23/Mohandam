@@ -24,8 +24,24 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
+  final _users = FirebaseFirestore.instance.collection('users');
   final _auth = FirebaseAuth.instance;
+
+  /*bool userExists = false;
+
+  // Check if User exists
+  _checkIfDocExists(String userUid) async {
+    await FirebaseFirestore.instance.doc('users/$userUid').get().then((doc) {
+      setState(() {
+        userExists = doc.exists;
+      });
+    });
+    print('---------------------------');
+    print('---------------------------');
+    print('User is exists? $userExists');
+    print('---------------------------');
+    print('---------------------------');
+  }*/
 
   Future<UserCredential> signInWithFacebook() async {
     // Trigger the sign-in flow
@@ -109,7 +125,7 @@ class _LoginViewState extends State<LoginView> {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => const SignUpView()));
                         },
-                        child:  Text(
+                        child: Text(
                           AppStrings.signUp.tr(),
                           style: const TextStyle(
                             fontWeight: FontWeight.w400,
@@ -127,7 +143,7 @@ class _LoginViewState extends State<LoginView> {
                   cursorColor: const Color(0xff096f77),
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return  AppStrings.pleaseEnterEmail.tr();
+                      return AppStrings.pleaseEnterEmail.tr();
                     } else if (!value.contains('@') && value.length < 6) {
                       return AppStrings.invalidEmail.tr();
                     }
@@ -185,7 +201,7 @@ class _LoginViewState extends State<LoginView> {
                     onPressed: () {
                       navigatePush(context, const ForgotPasswordView());
                     },
-                    child:  Text(
+                    child: Text(
                       AppStrings.forgotPassword.tr(),
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
@@ -215,52 +231,65 @@ class _LoginViewState extends State<LoginView> {
                           if (user.user!.emailVerified) {
                             navigatePushReplacement(context, const MainView());
                           } else {
-                            navigatePushReplacement(context, const VerificationView());
+                            navigatePushReplacement(
+                                context, const VerificationView());
                           }
                         });
                       }
                     },
-                    child:  Text(
+                    child: Text(
                       AppStrings.signIn.tr().toUpperCase(),
-                      style:const TextStyle(fontSize: 16.0),
+                      style: const TextStyle(fontSize: 16.0),
                     ),
                     style: ElevatedButton.styleFrom(
                       primary: const Color(0xff096f77),
                     ),
                   ),
                 ),
-                 Center(
+                Center(
                     child: Padding(
-                  padding:const EdgeInsets.symmetric(vertical: 35.0),
-                  child: Text('-${AppStrings.or.tr()}-', style:const TextStyle(fontSize: 20.0)),
+                  padding: const EdgeInsets.symmetric(vertical: 35.0),
+                  child: Text('-${AppStrings.or.tr()}-',
+                      style: const TextStyle(fontSize: 20.0)),
                 )),
                 // facebook sign-in
                 GestureDetector(
                   onTap: () async {
                     AwesomeDialog(
-                    context: context,
-                    dialogType: DialogType.NO_HEADER,
-                    headerAnimationLoop: true,
-                    animType: AnimType.BOTTOMSLIDE,
-                    title: AppStrings.loading.tr(),
-                    dismissOnBackKeyPress: false,
-                    dismissOnTouchOutside: false,
-                    autoDismiss: true,
-                  ).show();
+                      context: context,
+                      dialogType: DialogType.NO_HEADER,
+                      headerAnimationLoop: true,
+                      animType: AnimType.BOTTOMSLIDE,
+                      title: AppStrings.loading.tr(),
+                      dismissOnBackKeyPress: false,
+                      dismissOnTouchOutside: false,
+                      autoDismiss: true,
+                    ).show();
                     await signInWithFacebook().then((credential) {
-                      FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(credential.user!.uid)
-                          .set({
-                        'email': credential.user!.email,
-                        "name": credential.user!.displayName,
-                        'uid': credential.user!.uid,
-                        'signInMethod': 'facebook account',
-                        'mobileNumber': credential.user!.phoneNumber ?? '',
-                        'imgUrl': '',
-                        'shippingAddress': '',
-                      });
-
+                      // _checkIfDocExists(credential.user!.uid);
+                     /* if (userExists) {
+                        FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(credential.user!.uid)
+                            .update({
+                          'email': credential.user!.email,
+                          'uid': credential.user!.uid,
+                          'signInMethod': 'facebook account',
+                        });
+                      } else {*/
+                        FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(credential.user!.uid)
+                            .set({
+                          'email': credential.user!.email,
+                          "name": credential.user!.displayName,
+                          'uid': credential.user!.uid,
+                          'signInMethod': 'facebook account',
+                          'mobileNumber': credential.user!.phoneNumber ?? '',
+                          'imgUrl': '',
+                          'shippingAddress': '',
+                        });
+                      // }
                       navigatePushReplacement(context, const MainView());
                       print('-------------------------------------');
                       print(credential.user!.emailVerified);
@@ -285,10 +314,10 @@ class _LoginViewState extends State<LoginView> {
                             width: 26.0,
                           ),
                         ),
-                         Expanded(
+                        Expanded(
                           flex: 2,
                           child: Text(
-                             AppStrings.facebookSignIn.tr(),
+                            AppStrings.facebookSignIn.tr(),
                             style: const TextStyle(fontSize: 16.0),
                           ),
                         ),
@@ -302,18 +331,30 @@ class _LoginViewState extends State<LoginView> {
                 GestureDetector(
                   onTap: () async {
                     await signInWithGoogle().then((credential) {
-                      FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(credential.user!.uid)
-                          .set({
-                        'email': credential.user!.email,
-                        "name": credential.user!.displayName,
-                        'uid': credential.user!.uid,
-                        'signInMethod': 'google account',
-                        'mobileNumber': credential.user!.phoneNumber ?? '',
-                        'imgUrl': '',
-                        'shippingAddress': '',
-                      });
+                     /* _checkIfDocExists(credential.user!.uid);
+                      if (userExists) {
+                        FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(credential.user!.uid)
+                            .update({
+                          'email': credential.user!.email,
+                          'uid': credential.user!.uid,
+                          'signInMethod': 'google account',
+                        });
+                      } else {*/
+                        FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(credential.user!.uid)
+                            .set({
+                          'email': credential.user!.email,
+                          "name": credential.user!.displayName,
+                          'uid': credential.user!.uid,
+                          'signInMethod': 'google account',
+                          'mobileNumber': credential.user!.phoneNumber ?? '',
+                          'imgUrl': '',
+                          'shippingAddress': '',
+                        });
+                      // }
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.NO_HEADER,
@@ -345,7 +386,7 @@ class _LoginViewState extends State<LoginView> {
                             width: 26.0,
                           ),
                         ),
-                         Expanded(
+                        Expanded(
                           flex: 2,
                           child: Text(
                             AppStrings.googleSignIn.tr(),

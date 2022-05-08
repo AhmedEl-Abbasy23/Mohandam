@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:handmade_store/shared/functions.dart';
 import 'package:handmade_store/shared/my_colors.dart';
 import 'package:handmade_store/view/product_details_view.dart';
+import 'package:handmade_store/view/reusable_widgets/product_item.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 
 import '../shared/strings_manager.dart';
@@ -94,86 +95,11 @@ class _FavoritesViewState extends State<FavoritesView> {
                           },
                           child: Hero(
                             tag: snapshot.data!.docs[index].id,
-                            child: Card(
-                              elevation: 4,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Image.network(
-                                      snapshot.data!.docs[index]['images'][0],
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                    ),
-                                  ),
-                                  // Texts & favorite icon
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // title - subtitle - price
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 5.0, vertical: 2.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              snapshot.data!.docs[index]
-                                                  ['title'],
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 2.0),
-                                            Text(
-                                              snapshot.data!.docs[index]
-                                                  ['subtitle'],
-                                              maxLines: 2,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w300,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8.0),
-                                            Text(
-                                              '${snapshot.data!.docs[index]['price']} ${AppStrings.egp.tr()}',
-                                              style: const TextStyle(
-                                                color: Color(0xff096f77),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      // favorite icon
-                                      Flexible(
-                                        child: IconButton(
-                                          onPressed: () {
-                                            _addAndRemoveFavorites(
-                                                snapshot.data!.docs[index].id,
-                                                snapshot.data!.docs[index]
-                                                    ['inFavorite']);
-                                          },
-                                          icon: CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            child: SvgPicture.asset(
-                                              'assets/icons/favorites_ic2.svg',
-                                              color: snapshot.data!
-                                                  .docs[index]['inFavorite']
-                                                  ? const Color(0xffffc107) : Colors.black,
-                                              fit: BoxFit.cover,
-                                              height: 20.0,
-                                              width: 20.0,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                            child: ProductItem(
+                              imgUrl: snapshot.data!.docs[index]['images'][0],
+                              title: snapshot.data!.docs[index]['title'],
+                              description: snapshot.data!.docs[index]['description'],
+                              price: snapshot.data!.docs[index]['price'],
                             ),
                           ),
                         );

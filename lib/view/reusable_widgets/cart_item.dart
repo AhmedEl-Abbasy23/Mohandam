@@ -39,7 +39,7 @@ class _CartProductState extends State<CartProduct> {
         alignment: translator.activeLanguageCode == 'en'
             ? Alignment.centerRight
             : Alignment.centerLeft,
-        color: const Color(0xffff3d00),
+        color: MyColors.redAccent,
         width: double.infinity,
         child: SvgPicture.asset(
           'assets/icons/delete_ic.svg',

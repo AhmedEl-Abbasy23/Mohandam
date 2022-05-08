@@ -42,6 +42,7 @@ class AppStrings {
   static const String changeLanguage = "lang";
   static const String logout = "logout";
   static const String sellProduct = "sell_product";
+  static const String editProduct = "edit_product";
   static const String productCategory = "product_category";
   static const String chooseCategory = "choose_category";
   static const String productImages = "product_images";
@@ -61,6 +62,7 @@ class AppStrings {
   static const String invalidProductQuantity = "invalid_product_quantity";
   static const String uploadProduct = "upload_product";
   static const String uploadingProduct = "uploading_product";
+  static const String updatingProduct = "updating_product";
   static const String pleaseAddProductImages = "please_add_product_images";
   static const String accessories = "accessories";
   static const String jewelery = "jewelery";
@@ -107,4 +109,9 @@ class AppStrings {
   static const String orderTotalPrice = "order_total_price";
   static const String updateYourInfo = "update_your_info";
   static const String sell = "sell";
+  static const String deleteProduct = "delete_product";
+  static const String updateProduct = "update_product";
+  static const String confirmDeleteProduct = "confirm_delete_product";
+  static const String yes = "yes";
+  static const String cancel = "cancel";
 }

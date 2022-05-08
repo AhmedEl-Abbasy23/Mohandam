@@ -23,7 +23,7 @@ class _SplashViewState extends State<SplashView> {
 
   _startDelay() {
     _timer = Timer(
-      const Duration(seconds: 3),
+      const Duration(milliseconds: 2500),
       _goNext,
     );
   }
