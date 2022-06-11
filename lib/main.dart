@@ -23,13 +23,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: translator.delegates,
-      // Android + iOS Delegates
       locale: translator.activeLocale,
-      // Active locale
       supportedLocales: translator.locals(),
       // Locals list
       home: const SplashView(),
-      theme: ThemeData(fontFamily: translator.activeLanguageCode == 'en'?'SFP-REGULAR':"CairoSemiBold"),
+      theme: ThemeData(fontFamily: translator.activeLanguageCode == 'en'
+              ? 'SFP-REGULAR'
+              : "CairoSemiBold"),
       builder: (context, widget) => MyResponsive.responsiveSetup(widget),
     );
   }

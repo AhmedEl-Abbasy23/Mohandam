@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:handmade_store/shared/my_colors.dart';
+import 'package:handmade_store/view/cart_view.dart';
 import 'package:handmade_store/view/reusable_widgets/custom_text.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 

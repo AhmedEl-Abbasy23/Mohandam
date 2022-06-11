@@ -44,18 +44,10 @@ class _SellProductViewState extends State<SellProductView> {
     ];
     return categories;
   }
-
-  var _productTitle,
-      _productCategory = 'Recommended',
-      _productDescription,
-      _productPrice,
-      _productQuantity;
-
+  var _productTitle, _productCategory = 'Recommended', _productDescription, _productPrice, _productQuantity;
   String? _currentCategory;
-
   final ImagePicker _picker = ImagePicker();
   List<XFile> _images = [];
-
   _selectImages() async {
     final List<XFile>? _selectedImages = await _picker.pickMultiImage(
       imageQuality: 50,
@@ -68,7 +60,6 @@ class _SellProductViewState extends State<SellProductView> {
       print("Image List Length: " + _images.length.toString());
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,24 +82,19 @@ class _SellProductViewState extends State<SellProductView> {
           color: Colors.black,
         ),
       ),
-      body: Theme(
-        data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.fromSwatch()
-                .copyWith(secondary: const Color(0xff096f77))),
+      body: Theme( data: Theme.of(context).copyWith(colorScheme: ColorScheme.fromSwatch().copyWith(secondary: const Color(0xff096f77))),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
           child: Column(
             children: [
-              // product details
-              Expanded(
+              Expanded( // product details
                 child: SingleChildScrollView(
                   child: Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // product images section
-                        CarouselSlider.builder(
+                        CarouselSlider.builder( // product images section
                           itemCount: _images.length,
                           itemBuilder: (context, index, _) {
                             return SizedBox(
@@ -122,18 +108,8 @@ class _SellProductViewState extends State<SellProductView> {
                                 ),
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.circular(12.0),
-                                    child: _images.isNotEmpty
-                                        ? Image.file(
-                                            File(_images[index].path),
-                                            fit: BoxFit.cover,
-                                          )
-                                        : Image.asset(
-                                            'assets/images/mohandam_logo.jpg',
-                                            fit: BoxFit.cover,
-                                          )),
-                              ),
-                            );
-                          },
+                                    child: _images.isNotEmpty ? Image.file(File(_images[index].path), fit: BoxFit.cover,)
+                                        : Image.asset('assets/images/mohandam_logo.jpg', fit: BoxFit.cover,)),),);},
                           options: CarouselOptions(
                             height: 190,
                             autoPlay: true,
@@ -141,8 +117,7 @@ class _SellProductViewState extends State<SellProductView> {
                             enlargeCenterPage: true,
                             autoPlayAnimationDuration:
                                 const Duration(milliseconds: 500),
-                          ),
-                        ),
+                          ),),
                         const SizedBox(height: 30.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,10 +128,8 @@ class _SellProductViewState extends State<SellProductView> {
                                 children: [
                                   Text(AppStrings.productCategory.tr()),
                                   Container(
-                                    height: 60.0,
-                                    width: 200.0,
-                                    margin: const EdgeInsets.only(
-                                        top: 15.0, bottom: 30.0),
+                                    height: 60.0, width: 200.0,
+                                    margin: const EdgeInsets.only(top: 15.0, bottom: 30.0),
                                     child: DropdownButtonFormField(
                                       decoration: InputDecoration(
                                         enabledBorder: OutlineInputBorder(
@@ -186,29 +159,15 @@ class _SellProductViewState extends State<SellProductView> {
                                       dropdownColor: const Color(0xff096f77),
                                       elevation: 5,
                                       iconSize: 20.0,
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down_circle_outlined,
-                                        color: Colors.white,
-                                      ),
-                                      hint:  Text(
-                                        AppStrings.chooseCategory.tr(),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 15.0,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: translator.activeLanguageCode == 'en'? 16.0 : 14.0,
-                                        color: Colors.white,
-                                        fontFamily: translator.activeLanguageCode == 'en'?'SFP-REGULAR':"CairoRegular",
-                                      ),
+                                      icon: const Icon( Icons.arrow_drop_down_circle_outlined, color: Colors.white,),
+                                      hint:  Text(AppStrings.chooseCategory.tr(),
+                                        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15.0, color: Colors.white,),),
+                                      style: TextStyle(fontWeight: FontWeight.w500,
+                                        fontSize: translator.activeLanguageCode == 'en'? 16.0 : 14.0, color: Colors.white,
+                                        fontFamily: translator.activeLanguageCode == 'en'?'SFP-REGULAR':"CairoRegular",),
                                       value: _currentCategory,
-                                      isExpanded: true,
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      autofocus: true,
-                                      items: dropdownItems,
+                                      isExpanded: true, borderRadius: BorderRadius.circular(15.0),
+                                      autofocus: true, items: dropdownItems,
                                       onChanged: (String? value) {
                                         setState(() {
                                           _currentCategory = value;
@@ -217,24 +176,16 @@ class _SellProductViewState extends State<SellProductView> {
                                       onSaved: (String? value) {
                                         setState(() {
                                           _currentCategory = value;
-                                        });
-                                      },
-                                      autovalidateMode: AutovalidateMode.always,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                        });},
+                                      autovalidateMode: AutovalidateMode.always,),),],),),
                             Flexible(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(AppStrings.productImages.tr()),
                                   Container(
-                                    height: 60.0,
-                                    width: 200.0,
-                                    margin: const EdgeInsets.only(
-                                        top: 15.0, bottom: 30.0),
+                                    height: 60.0, width: 200.0,
+                                    margin: const EdgeInsets.only(top: 15.0, bottom: 30.0),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
@@ -242,27 +193,18 @@ class _SellProductViewState extends State<SellProductView> {
                                         onPressed: () {
                                           _selectImages();
                                         },
-                                        child:  Text(
-                                          AppStrings.chooseImages.tr(),
-                                          style:const TextStyle(
+                                        child:  Text(AppStrings.chooseImages.tr(), style:const TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16.0,
                                             color: Colors.white,
-                                          ),
-                                        ),
+                                          ),),
                                         style: ElevatedButton.styleFrom(
                                           primary: const Color(0xff096f77),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10.0),
                                           ),
-                                        )),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                                        )),),],),),],),
                         Text(AppStrings.productTitle.tr()),
                         TextFormField(
                           // initialValue: snapshot.data!.get('name'),
@@ -340,16 +282,10 @@ class _SellProductViewState extends State<SellProductView> {
                                       // on open form
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: MyColors.primary),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                            color: MyColors.primary),),),),],),),
                             const SizedBox(width: 60.0),
-                            // quantity
-                            Flexible(
+
+                            Flexible( // quantity
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -373,20 +309,7 @@ class _SellProductViewState extends State<SellProductView> {
                                       // on open form
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: MyColors.primary),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+                                            color: MyColors.primary),),),),],),),],),],),),),),
               // Upload product
               Container(
                 margin: const EdgeInsets.only(top: 20.0, bottom: 40.0),
@@ -396,10 +319,7 @@ class _SellProductViewState extends State<SellProductView> {
                   onPressed: () async {
                     _uploadProduct(context);
                   },
-                  child:  Text(
-                    AppStrings.uploadProduct.tr(),
-                    style:const TextStyle(fontSize: 16.0),
-                  ),
+                  child:  Text(AppStrings.uploadProduct.tr(), style:const TextStyle(fontSize: 16.0),),
                   style: ElevatedButton.styleFrom(
                     primary: const Color(0xff096f77),
                   ),
@@ -415,7 +335,6 @@ class _SellProductViewState extends State<SellProductView> {
   _uploadProduct(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      // edit task without update image.
       // upload product images
       List<String> _imagesUrls = [];
       var rand = Random().nextInt(100000);
@@ -427,10 +346,8 @@ class _SellProductViewState extends State<SellProductView> {
                 animType: AnimType.BOTTOMSLIDE,
                 title: AppStrings.uploadingProduct.tr(),
                 dismissOnBackKeyPress: false,
-                dismissOnTouchOutside: false)
-            .show()
-            .then((value) {
-          Navigator.of(context).pop();
+                dismissOnTouchOutside: false).show()
+            .then((value) {Navigator.of(context).pop();
         });
         for (var imageFile in _images) {
           var reference = _productsStorage.ref('products/${_currentCategory ?? _productCategory}/')
@@ -442,39 +359,20 @@ class _SellProductViewState extends State<SellProductView> {
           var downloadUrl = await uploadImages.whenComplete(() => {});
           await downloadUrl.ref.getDownloadURL().then((value) {
             _imagesUrls.add(value);
-
-            print('---------------------------');
-            print(_imagesUrls);
-            print('---------------------------');
           });
         }
         if (_imagesUrls.length == _images.length) {
           var dateString = DateFormat.d().format(DateTime.now()) + DateFormat.Hms().format(DateTime.now());
           _productsData.add({
             'category': _currentCategory ?? _productCategory,
-            'description': _productDescription,
-            'price': _productPrice,
-            'title': _productTitle,
-            'quantity': _productQuantity,
-            'images': _imagesUrls,
-            'inFavorite': false,
-            'sellerUid': _currentUser.uid,
-            'uploadTime': int.parse(dateString.replaceAll(':','')),
+            'description': _productDescription, 'price': _productPrice, 'title': _productTitle, 'quantity': _productQuantity, 'images': _imagesUrls,
+            'inFavorite': false, 'sellerUid': _currentUser.uid, 'uploadTime': int.parse(dateString.replaceAll(':','')),
           }).then((value) async {
             // to upload seller information inside product.
             print(value.id);
-            var _userInfo = await FirebaseFirestore.instance
-                .collection('users')
-                .doc(_currentUser.uid)
-                .get();
-            await _productsData
-                .doc(value.id)
-                .collection('seller info')
-                .doc(_currentUser.uid)
-                .set({
-              'sellerName': _userInfo.get('name'),
-              'sellerImg': _userInfo.get('imgUrl'),
-              'sellerUid': _currentUser.uid,
+            var _userInfo = await FirebaseFirestore.instance.collection('users').doc(_currentUser.uid).get();
+            await _productsData.doc(value.id).collection('seller info').doc(_currentUser.uid).set({
+              'sellerName': _userInfo.get('name'), 'sellerImg': _userInfo.get('imgUrl'), 'sellerUid': _currentUser.uid,
             });
             print("Product Uploaded");
             Navigator.of(context).pop();

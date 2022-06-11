@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:handmade_store/shared/functions.dart';
 import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/login_view.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
@@ -43,10 +44,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             children: [
                Padding(
                 padding: const EdgeInsets.symmetric(vertical: 65.0),
-                child: Text(
-                  AppStrings.enterYourEmail.tr(),
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
-                ),
+                child: Text(AppStrings.enterYourEmail.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),),
               ),
               Text(AppStrings.email.tr()),
               TextFormField(
@@ -76,19 +74,11 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                     if (_formKey.currentState!.validate()) {
                       await _auth
                           .sendPasswordResetEmail(email: _emailController.text)
-                          .then((_) {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => const LoginView()));
-                      });
+                          .then((_) { navigatePush(context, const LoginView());});
                     }
                   },
-                  child:  Text(
-                    AppStrings.resetPassword.tr().toUpperCase(),
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    primary: const Color(0xff096f77),
-                  ),
+                  child:  Text(AppStrings.resetPassword.tr().toUpperCase(), style: const TextStyle(fontSize: 16.0),),
+                  style: ElevatedButton.styleFrom(primary: const Color(0xff096f77),),
                 ),
               ),
             ],

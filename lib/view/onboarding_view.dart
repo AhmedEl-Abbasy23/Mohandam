@@ -27,22 +27,11 @@ class OnBoardingScreen extends StatelessWidget {
             navigatePushReplacement(context, const LoginView());
           },
           showSkipButton: true,
-          skip: const Icon(
-            Icons.skip_next,
-            color: Colors.white,
-          ),
-          next: const Icon(
-            Icons.arrow_forward_ios,
-            color: Colors.white,
-          ),
+          skip: const Icon(Icons.skip_next, color: Colors.white),
+          next: const Icon(Icons.arrow_forward_ios, color: Colors.white),
           done: Text(
             AppStrings.done.tr(),
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 18.0,
-              color: Colors.white,
-            ),
-          ),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18.0, color: Colors.white,),),
           globalBackgroundColor: const Color(0xff096f77),
           dotsDecorator: DotsDecorator(
             size: const Size.square(10.0),
@@ -58,7 +47,6 @@ class OnBoardingScreen extends StatelessWidget {
       ),
     );
   }
-
   var screens = [
     PageViewModel(
       title: AppStrings.onBoardingTitle1.tr(),
@@ -83,9 +71,7 @@ class OnBoardingScreen extends StatelessWidget {
       title: AppStrings.onBoardingTitle2.tr(),
       body: AppStrings.onBoardingBody2.tr(),
       image: Center(
-        child: Lottie.asset(
-            "assets/json/onboarding2.json"
-        ),
+        child: Lottie.asset("assets/json/onboarding2.json"),
       ),
       decoration: const PageDecoration(
         pageColor: Colors.white,

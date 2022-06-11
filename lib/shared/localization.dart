@@ -3,7 +3,7 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 class MyLocalization {
   static localizationSetup() async{
     await translator.init(
-      localeType: LocalizationDefaultType.device,
+      localeType: LocalizationDefaultType.asDefined,
       languagesList: <String>['ar', 'en'],
       assetsDirectory: 'assets/locale/',
     );

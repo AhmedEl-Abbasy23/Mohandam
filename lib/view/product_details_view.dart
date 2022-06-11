@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:handmade_store/shared/my_colors.dart';
@@ -43,39 +42,26 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     await _productsData.doc(productId).update({
       'inFavorite': !inFavorite,
     });
-    print('Product updated');
   }
 
-  final String appLogo =
-      'https://firebasestorage.googleapis.com/v0/b/handmade-49991.appspot.com/o/mohandam_logo.jpg?alt=media&token=15f1d4be-0af1-47f1-b66f-a5b4d0ed903f';
-
+  final String appLogo = 'https://firebasestorage.googleapis.com/v0/b/handmade-49991.appspot.com/o/mohandam_logo.jpg?alt=media&token=15f1d4be-0af1-47f1-b66f-a5b4d0ed903f';
   _getProductDetails() {
     return _productsData.doc(widget.productId).snapshots();
   }
   _getSellerUid() {
-    return _productsData
-        .doc(widget.productId)
-        .collection('seller info')
-        .snapshots();
+    return _productsData.doc(widget.productId).collection('seller info').snapshots();
   }
-
   List<dynamic> selectedImages = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Theme(
-        data: Theme.of(context).copyWith(
-            colorScheme:
-                ColorScheme.fromSwatch().copyWith(secondary: MyColors.primary)),
-        child: Padding(
-          padding: const EdgeInsets.only(
-              left: 20.0, right: 20.0, top: 20.0, bottom: 0.0),
+        data: Theme.of(context).copyWith(colorScheme: ColorScheme.fromSwatch().copyWith(secondary: MyColors.primary)),
+        child: Padding( padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 0.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Product section
               Expanded(
                 child: SingleChildScrollView(
                     child: StreamBuilder<DocumentSnapshot?>(
@@ -86,14 +72,11 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // images & buttons
-                                Container(
-                                  margin: const EdgeInsets.only(top: 20.0),
-                                  height: 320.0,
+                                Container(  // images & buttons
+                                  margin: const EdgeInsets.only(top: 20.0), height: 320.0,
                                   child: Stack(
                                     children: [
-                                      // product images section
-                                      Hero(
+                                      Hero(  // product images section
                                         tag: widget.productId,
                                         child: CarouselSlider.builder(
                                           itemCount:
@@ -109,88 +92,36 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                                   width: 1.5,
                                                 ),
                                               ),
-                                              child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15.0),
-                                                  child: productImages
-                                                          .isNotEmpty
-                                                      ? Image.network(
-                                                          productImages[index],
-                                                          fit: BoxFit.cover,
-                                                        )
-                                                      : Image.asset(
-                                                          'assets/images/mohandam_logo.jpg',
-                                                          fit: BoxFit.cover,
-                                                        )),
-                                            );
-                                          },
+                                              child: ClipRRect( borderRadius: BorderRadius.circular(15.0),
+                                                  child: productImages.isNotEmpty ? Image.network( productImages[index], fit: BoxFit.cover,)
+                                                      : Image.asset('assets/images/mohandam_logo.jpg', fit: BoxFit.cover,)),); },
                                           options: CarouselOptions(
                                             height: 300,
                                             autoPlay: true,
                                             enableInfiniteScroll: true,
                                             enlargeCenterPage: true,
-                                            autoPlayAnimationDuration:
-                                                const Duration(
-                                                    milliseconds: 5000),
+                                            autoPlayAnimationDuration: const Duration(milliseconds: 5000),
                                           ),
-                                        ),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        ),),
+                                      Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          // back icon
                                           IconButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
+                                            onPressed: () { Navigator.of(context).pop(); }, // back icon
                                             icon: const CircleAvatar(
                                               backgroundColor: Colors.white,
-                                              child: Icon(
-                                                Icons.arrow_back_ios,
-                                                color: Colors.black,
-                                                size: 22.0,
-                                              ),
-                                            ),
-                                          ),
-                                          // favorite icon
+                                              child: Icon(Icons.arrow_back_ios, color: Colors.black, size: 22.0,),), ),
                                           IconButton(
-                                            onPressed: () {
-                                              _addAndRemoveFavorites(
-                                                widget.productId,
-                                                snapshot.data!['inFavorite'],
-                                              );
-                                            },
+                                            onPressed: () { _addAndRemoveFavorites( widget.productId, snapshot.data!['inFavorite'],); },  // favorite icon
                                             icon: CircleAvatar(
                                               backgroundColor: Colors.white,
-                                              child: SvgPicture.asset(
-                                                'assets/icons/favorites_ic2.svg',
-                                                color:
-                                                    snapshot.data!['inFavorite']
-                                                        ? Colors.orangeAccent
-                                                        : Colors.black,
-                                                fit: BoxFit.cover,
-                                                height: 20.0,
-                                                width: 20.0,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                              child: SvgPicture.asset( 'assets/icons/favorites_ic2.svg',
+                                                color: snapshot.data!['inFavorite'] ? Colors.orangeAccent : Colors.black, fit: BoxFit.cover, height: 20.0, width: 20.0,),),),
+                                        ],),],),),
                                 // title & product images
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    CustomText(
-                                      text: snapshot.data!['title'],
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    CustomText(text: snapshot.data!['title'], fontSize: 22.0, fontWeight: FontWeight.bold,),
                                     const Spacer(),
                                     Flexible(
                                       child: SizedBox(
@@ -199,10 +130,8 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                           scrollDirection: Axis.horizontal,
                                           children: [
                                             MultiSelectContainer(
-                                              itemsPadding:
-                                                  const EdgeInsets.all(2.0),
-                                              itemsDecoration:
-                                                  MultiSelectDecorations(
+                                              itemsPadding: const EdgeInsets.all(2.0),
+                                              itemsDecoration: MultiSelectDecorations(
                                                 decoration: BoxDecoration(
                                                     color: MyColors.primary
                                                         .withOpacity(0.4)),
@@ -217,121 +146,53 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                                   ),
                                                 ),
                                               ),
-                                              items: List.generate(
-                                                  productImages.length,
-                                                  (int index) {
+                                              items: List.generate(productImages.length, (int index) {
                                                 return MultiSelectCard(
                                                   value: productImages[index],
-                                                  child: getChild(imagePath: productImages[index]),
-                                                );
-                                              }),
-                                              listViewSettings:
-                                                  const ListViewSettings(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                              ),
+                                                  child: getChild(imagePath: productImages[index]),); }),
+                                              listViewSettings: const ListViewSettings( scrollDirection: Axis.horizontal, ),
                                               onChange: (List<dynamic> selectedItems, selectedItem) {
                                                 setState(() {
                                                   selectedImages = selectedItems;
                                                 });
-                                                print(selectedItems);
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                                print(selectedItems); },),],),),),
+                                  ], ),
                                 // subtitle & quantity
                                 Padding(
                                   padding: const EdgeInsets.only(top: 10.0),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      CustomText(
-                                        text: AppStrings.details.tr(),
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      RoundedShapeInfo(
-                                        title: AppStrings.quantity.tr(),
-                                        content: snapshot.data!['quantity'],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                CustomText(
-                                  text: snapshot.data!['description'],
-                                  textAlign: TextAlign.start,
-                                  fontSize: 14.0,
-                                  height: 2.0,
-                                ),
+                                      CustomText(text: AppStrings.details.tr(), fontSize: 16.0, fontWeight: FontWeight.w600,),
+                                      RoundedShapeInfo(title: AppStrings.quantity.tr(), content: snapshot.data!['quantity'],),],),),
+                                CustomText(text: snapshot.data!['description'], textAlign: TextAlign.start, fontSize: 14.0, height: 2.0,),
                                 const SizedBox(height: 20.0),
                                 StreamBuilder<QuerySnapshot?>(
                                     stream: _getSellerUid(),
                                     builder: (context, snapshot) {
                                       return snapshot.hasData
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 5.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                          ? Padding( padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                              child: Row( mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
                                                   CircleAvatar(
-                                                    radius: 26.0,
-                                                    backgroundColor:
-                                                        MyColors.primary,
+                                                    radius: 26.0, backgroundColor: MyColors.primary,
                                                     child: CircleAvatar(
-                                                      backgroundImage:
-                                                          NetworkImage(
-                                                        snapshot.data!.docs[0]['sellerImg'] != ''
+                                                      backgroundImage: NetworkImage( snapshot.data!.docs[0]['sellerImg'] != ''
                                                             ? snapshot.data!.docs[0]['sellerImg']
-                                                            : appLogo,
-                                                      ),
-                                                      radius: 25.0,
-                                                    ),
-                                                  ),
+                                                            : appLogo, ),  radius: 25.0,), ),
                                                   const SizedBox(width: 10.0),
                                                   Column(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      CustomText(
-                                                        text: AppStrings.seller
-                                                            .tr(),
-                                                        fontSize: 16.0,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                                      CustomText( text: AppStrings.seller.tr(),
+                                                        fontSize: 16.0, fontWeight: FontWeight.bold,),
                                                       CustomText(
                                                         text: snapshot.data!.docs[0]['sellerName'],
-                                                        fontSize: 16.0,
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          : Container();
-                                    }),
-                              ],
-                            );
-                          } else {
-                            return const Center(
-                              child: CircularProgressIndicator(
-                                color: Color(0xff096f77),
-                              ),
-                            );
-                          }
-                        })),
-              ),
-              // Price & Add section
-              Container(
+                                                        fontSize: 16.0, fontWeight: FontWeight.w500, ),],),]),)
+                                          : Container(); }), ],);
+                          } else { return const Center( child: CircularProgressIndicator( color: Color(0xff096f77),),); }})), ),
+              Container(    // Price & Add section
                 height: 80.0,
                 color: Colors.white,
                 margin: const EdgeInsets.only(bottom: 50.0),
@@ -343,19 +204,10 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CustomText(
-                          text: AppStrings.price.tr().toUpperCase(),
-                          fontSize: 15.0,
-                          color: Colors.grey,
-                        ),
+                        CustomText(text: AppStrings.price.tr().toUpperCase(), fontSize: 15.0, color: Colors.grey,),
                         CustomText(
                           text: '${widget.productPrice} ${AppStrings.egp.tr()}',
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: MyColors.primary,
-                        ),
-                      ],
-                    ),
+                          fontSize: 18.0, fontWeight: FontWeight.bold, color: MyColors.primary,),],),
                     // add button
                     StreamBuilder<QuerySnapshot?>(
                         stream: _getSellerUid(),
@@ -364,106 +216,50 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                               ? SizedBox(
                                   height: 60.0,
                                   width: 145.0,
-                                  child: sellerSnapshot.data!.docs[0]['sellerUid'] !=
-                                          _currentUser!.uid
+                                  child: sellerSnapshot.data!.docs[0]['sellerUid'] != _currentUser!.uid
                                       ? StreamBuilder<DocumentSnapshot>(
                                         stream: _getProductDetails(),
                                         builder: (context, snapshot) {
-
                                           return CustomButton(
                                               AppStrings.add.tr().toUpperCase(),
-                                              () {
-                                                _addProductToCart(
+                                              () { _addProductToCart(
                                                   productId: widget.productId,
                                                   productImages: snapshot.data!['images'],
                                                   productTitle: snapshot.data!['title'],
                                                   productPrice: snapshot.data!['price'],
                                                   productQuantity:snapshot.data!['quantity'],
-                                                  sellerUid: sellerSnapshot.data!.docs[0]['sellerUid'],
-                                                );
-                                              },
-                                            );
-                                        }
-                                      )
+                                                  sellerUid: sellerSnapshot.data!.docs[0]['sellerUid'], );},);})
                                       : null,
                                 )
-                              : const Center(
-                                  child: CircularProgressIndicator(
-                                    color: Color(0xff096f77),
-                                  ),
-                                );
-                        }),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
+                              : const Center( child: CircularProgressIndicator( color: Color(0xff096f77),),);}),],),),],),),),);}
   _addProductToCart({
-    required List<dynamic> productImages,
-    required String productTitle,
-    required String productId,
-    required String productPrice,
-    required String productQuantity,
-    required String sellerUid,
+    required List<dynamic> productImages, required String productTitle, required String productId,
+    required String productPrice, required String productQuantity, required String sellerUid,
   }) async {
-    await _cartData
-        .doc(_currentUser!.uid)
-        .collection('cart')
-        .doc(productId)
-        .set({
+    await _cartData.doc(_currentUser!.uid).collection('cart').doc(productId).set({
       'images': selectedImages.isNotEmpty ? selectedImages : productImages,
-      'title': productTitle,
-      'price': productPrice,
-      'quantity': productQuantity,
-      'productId': productId,
+      'title': productTitle, 'price': productPrice,
+      'quantity': productQuantity, 'productId': productId,
       'sellerUid': sellerUid,
     }).then((value) {
-      print('-----------------------');
-      print('$productTitle is added to your cart.');
-      print('-----------------------');
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 2),
+      SnackBar( duration: const Duration(seconds: 2),
         backgroundColor: MyColors.primary,
-        content: SizedBox(
-          height: 30.0,
-          child: Text(
-            '"$productTitle" ${AppStrings.addToCart.tr()}',
-            textAlign: TextAlign.start,
-            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-          ),
-        ),
-      ),
-    );
-  }
-
+        content: SizedBox( height: 30.0,
+          child: Text('"$productTitle" ${AppStrings.addToCart.tr()}',  textAlign: TextAlign.start,
+            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),),),),);}
   Widget getChild({required String imagePath}) {
-    return SizedBox(
-      height: 30.0,
-      width: 30.0,
+    return SizedBox( height: 30.0, width: 30.0,
       child: Image.network(
-        imagePath,
-        fit: BoxFit.cover,
+        imagePath, fit: BoxFit.cover,
       ),
     );
   }
 }
-
 class RoundedShapeInfo extends StatelessWidget {
   final String title, content;
-
-  const RoundedShapeInfo({
-    Key? key,
-    required this.title,
-    required this.content,
-  }) : super(key: key);
-
+  const RoundedShapeInfo({Key? key, required this.title, required this.content,}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -478,20 +274,8 @@ class RoundedShapeInfo extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Flexible(
-              flex: 2,
-              child: CustomText(
-                text: title,
-                fontSize: 16.0,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Flexible(
-              child: CustomText(
-                text: content,
-                fontSize: 15.0,
-              ),
-            ),
+            Flexible(flex: 2, child: CustomText( text: title, fontSize: 16.0, fontWeight: FontWeight.w600,),),
+            Flexible( child: CustomText( text: content, fontSize: 15.0,),),
           ],
         ),
       ),

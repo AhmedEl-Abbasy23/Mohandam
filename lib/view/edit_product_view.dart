@@ -441,11 +441,8 @@ class _EditProductViewState extends State<EditProductView> {
         ).show().then((value) {
           Navigator.of(context).pop();
         });
-        for (var imageFile in _images) {
-          var reference = _productsStorage
-              .ref(
-                  'products/$productCategory/')
-              .child('$rand' + basename(imageFile.path));
+        for(var imageFile in _images) {
+          var reference = _productsStorage.ref('products/$productCategory/').child('$rand' + basename(imageFile.path));
           var uploadImages = reference.putFile(File(imageFile.path));
           print('---------------------------');
           print('$rand' + basename(imageFile.path) + ' is uploaded');
@@ -453,44 +450,22 @@ class _EditProductViewState extends State<EditProductView> {
           var downloadUrl = await uploadImages.whenComplete(() => {});
           await downloadUrl.ref.getDownloadURL().then((value) {
             _imagesUrls.add(value);
-
-            print('---------------------------');
-            print(_imagesUrls);
-            print('---------------------------');
           });
         }
         if (_imagesUrls.length == _images.length) {
           List.generate(currentImages.length, (index) {
             _productsStorage.refFromURL(currentImages[index]).delete();
-            print('---------------------------');
-            print('${currentImages[index]} is deleted');
-            print('---------------------------');
           });
           var dateString = DateFormat.d().format(DateTime.now()) + DateFormat.Hms().format(DateTime.now());
           _productsData.doc(widget.productId).update({
             'description': _productDescription,
-            'price': _productPrice,
-            'title': _productTitle,
-            'quantity': _productQuantity,
-            'images': _imagesUrls,
-            'inFavorite': false,
-            'sellerUid': _currentUser.uid,
-            'uploadTime': int.parse(dateString.replaceAll(':','')),
+            'price': _productPrice, 'title': _productTitle, 'quantity': _productQuantity, 'images': _imagesUrls, 'inFavorite': false, 'sellerUid': _currentUser.uid, 'uploadTime': int.parse(dateString.replaceAll(':','')),
           }).then((value) async {
             // to upload seller information inside product.
             print(widget.productId);
-            var _userInfo = await FirebaseFirestore.instance
-                .collection('users')
-                .doc(_currentUser.uid)
-                .get();
-            await _productsData
-                .doc(widget.productId)
-                .collection('seller info')
-                .doc(_currentUser.uid)
-                .update({
-              'sellerName': _userInfo.get('name'),
-              'sellerImg': _userInfo.get('imgUrl'),
-              'sellerUid': _currentUser.uid,
+            var _userInfo = await FirebaseFirestore.instance.collection('users').doc(_currentUser.uid).get();
+            await _productsData.doc(widget.productId).collection('seller info').doc(_currentUser.uid).update({
+              'sellerName': _userInfo.get('name'), 'sellerImg': _userInfo.get('imgUrl'), 'sellerUid': _currentUser.uid,
             });
             print("Product Updated");
             Navigator.of(context).pop();
@@ -505,33 +480,16 @@ class _EditProductViewState extends State<EditProductView> {
           title: AppStrings.updatingProduct.tr(),
           dismissOnBackKeyPress: false,
           dismissOnTouchOutside: false,
-        ).show().then((value) {
-          Navigator.of(context).pop();
-        });
+        ).show().then((value) {Navigator.of(context).pop();});
         var dateString = DateFormat.d().format(DateTime.now()) + DateFormat.Hms().format(DateTime.now());
           _productsData.doc(widget.productId).update({
-            'description': _productDescription,
-            'price': _productPrice,
-            'title': _productTitle,
-            'quantity': _productQuantity,
-            'inFavorite': false,
-            'sellerUid': _currentUser.uid,
-            'uploadTime': int.parse(dateString.replaceAll(':','')),
+            'description': _productDescription, 'price': _productPrice, 'title': _productTitle, 'quantity': _productQuantity, 'inFavorite': false, 'sellerUid': _currentUser.uid, 'uploadTime': int.parse(dateString.replaceAll(':','')),
           }).then((value) async {
             // to upload seller information inside product.
             print(widget.productId);
-            var _userInfo = await FirebaseFirestore.instance
-                .collection('users')
-                .doc(_currentUser.uid)
-                .get();
-            await _productsData
-                .doc(widget.productId)
-                .collection('seller info')
-                .doc(_currentUser.uid)
-                .update({
-              'sellerName': _userInfo.get('name'),
-              'sellerImg': _userInfo.get('imgUrl'),
-              'sellerUid': _currentUser.uid,
+            var _userInfo = await FirebaseFirestore.instance.collection('users').doc(_currentUser.uid).get();
+            await _productsData.doc(widget.productId).collection('seller info').doc(_currentUser.uid).update({
+              'sellerName': _userInfo.get('name'), 'sellerImg': _userInfo.get('imgUrl'), 'sellerUid': _currentUser.uid,
             });
             print("Product Updated");
             Navigator.of(context).pop();

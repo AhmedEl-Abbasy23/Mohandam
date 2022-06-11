@@ -24,24 +24,9 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final _users = FirebaseFirestore.instance.collection('users');
+
   final _auth = FirebaseAuth.instance;
-
-  /*bool userExists = false;
-
-  // Check if User exists
-  _checkIfDocExists(String userUid) async {
-    await FirebaseFirestore.instance.doc('users/$userUid').get().then((doc) {
-      setState(() {
-        userExists = doc.exists;
-      });
-    });
-    print('---------------------------');
-    print('---------------------------');
-    print('User is exists? $userExists');
-    print('---------------------------');
-    print('---------------------------');
-  }*/
+  bool isObscure = true;
 
   Future<UserCredential> signInWithFacebook() async {
     // Trigger the sign-in flow
@@ -73,9 +58,6 @@ class _LoginViewState extends State<LoginView> {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  // final _currentUser = FirebaseAuth.instance.currentUser;
-  bool isObscure = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,33 +87,16 @@ class _LoginViewState extends State<LoginView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            AppStrings.welcome.tr(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 35.0,
-                            ),
-                          ),
+                            AppStrings.welcome.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 35.0,),),
                           const SizedBox(height: 10.0),
-                          Text(
-                            AppStrings.signInToContinue.tr(),
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                            ),
-                          ),
+                          Text(AppStrings.signInToContinue.tr(), style: const TextStyle(fontSize: 16.0,),),
                         ],
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const SignUpView()));
+                          navigatePush(context, const SignUpView());
                         },
-                        child: Text(
-                          AppStrings.signUp.tr(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 20.0,
-                            color: Color(0xff096f77),
-                          ),
+                        child: Text(AppStrings.signUp.tr(), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 20.0, color: Color(0xff096f77),),
                         ),
                       ),
                     ],
@@ -201,13 +166,7 @@ class _LoginViewState extends State<LoginView> {
                     onPressed: () {
                       navigatePush(context, const ForgotPasswordView());
                     },
-                    child: Text(
-                      AppStrings.forgotPassword.tr(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
-                    ),
+                    child: Text(AppStrings.forgotPassword.tr(), style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black,),),
                   ),
                 ),
                 const SizedBox(height: 10.0),
@@ -222,12 +181,7 @@ class _LoginViewState extends State<LoginView> {
                             .signInWithEmailAndPassword(
                           email: _emailController.text,
                           password: _passwordController.text,
-                        )
-                            .then((user) {
-                          print(
-                              '---------------- email verified is: ---------------');
-                          print(user.user!.emailVerified);
-                          print('----------------  ---------------');
+                        ).then((user) {
                           if (user.user!.emailVerified) {
                             navigatePushReplacement(context, const MainView());
                           } else {
@@ -237,20 +191,12 @@ class _LoginViewState extends State<LoginView> {
                         });
                       }
                     },
-                    child: Text(
-                      AppStrings.signIn.tr().toUpperCase(),
-                      style: const TextStyle(fontSize: 16.0),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      primary: const Color(0xff096f77),
-                    ),
-                  ),
+                    child: Text(AppStrings.signIn.tr().toUpperCase(), style: const TextStyle(fontSize: 16.0),), style: ElevatedButton.styleFrom(primary: const Color(0xff096f77),),),
                 ),
                 Center(
                     child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 35.0),
-                  child: Text('-${AppStrings.or.tr()}-',
-                      style: const TextStyle(fontSize: 20.0)),
+                  child: Text('-${AppStrings.or.tr()}-', style: const TextStyle(fontSize: 20.0)),
                 )),
                 // facebook sign-in
                 GestureDetector(
@@ -261,12 +207,11 @@ class _LoginViewState extends State<LoginView> {
                       headerAnimationLoop: true,
                       animType: AnimType.BOTTOMSLIDE,
                       title: AppStrings.loading.tr(),
-                      dismissOnBackKeyPress: false,
-                      dismissOnTouchOutside: false,
+                      dismissOnBackKeyPress: true,
+                      dismissOnTouchOutside: true,
                       autoDismiss: true,
                     ).show();
                     await signInWithFacebook().then((credential) {
-                      // _checkIfDocExists(credential.user!.uid);
                      /* if (userExists) {
                         FirebaseFirestore.instance
                             .collection('users')
@@ -287,16 +232,7 @@ class _LoginViewState extends State<LoginView> {
                           'signInMethod': 'facebook account',
                           'mobileNumber': credential.user!.phoneNumber ?? '',
                           'imgUrl': '',
-                          'shippingAddress': '',
-                        });
-                      // }
-                      navigatePushReplacement(context, const MainView());
-                      print('-------------------------------------');
-                      print(credential.user!.emailVerified);
-                      print('-------------------------------------');
-                    }).catchError((error) {
-                      print(error.toString());
-                    });
+                          'shippingAddress': '',});navigatePushReplacement(context, const MainView());}).catchError((error) {print(error.toString());});
                   },
                   child: Container(
                     height: 60.0,
@@ -331,17 +267,6 @@ class _LoginViewState extends State<LoginView> {
                 GestureDetector(
                   onTap: () async {
                     await signInWithGoogle().then((credential) {
-                     /* _checkIfDocExists(credential.user!.uid);
-                      if (userExists) {
-                        FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(credential.user!.uid)
-                            .update({
-                          'email': credential.user!.email,
-                          'uid': credential.user!.uid,
-                          'signInMethod': 'google account',
-                        });
-                      } else {*/
                         FirebaseFirestore.instance
                             .collection('users')
                             .doc(credential.user!.uid)
@@ -352,9 +277,7 @@ class _LoginViewState extends State<LoginView> {
                           'signInMethod': 'google account',
                           'mobileNumber': credential.user!.phoneNumber ?? '',
                           'imgUrl': '',
-                          'shippingAddress': '',
-                        });
-                      // }
+                          'shippingAddress': '',});
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.NO_HEADER,
@@ -406,3 +329,21 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
+
+// _checkIfDocExists(credential.user!.uid);
+/*
+  final _users = FirebaseFirestore.instance.collection('users');
+  bool userExists = false;
+  // Check if User exists
+  _checkIfDocExists(String userUid) async {
+    await FirebaseFirestore.instance.doc('users/$userUid').get().then((doc) {
+      setState(() {
+        userExists = doc.exists;
+      });
+    });
+    print('---------------------------');
+    print('---------------------------');
+    print('User is exists? $userExists');
+    print('---------------------------');
+    print('---------------------------');
+  }*/

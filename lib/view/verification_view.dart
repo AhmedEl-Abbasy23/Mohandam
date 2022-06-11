@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:handmade_store/shared/functions.dart';
 import 'package:handmade_store/shared/strings_manager.dart';
 import 'package:handmade_store/view/main_view.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
@@ -36,9 +37,10 @@ class _VerificationViewState extends State<VerificationView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           Text(
+            Text(
               AppStrings.verifyEmail.tr(),
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0),
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0),
             ),
             const SizedBox(height: 10.0),
             RichText(
@@ -67,11 +69,9 @@ class _VerificationViewState extends State<VerificationView> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const MainView()),
-                    );
+                    navigatePush(context, const MainView());
                   },
-                  child:  Text(
+                  child: Text(
                     AppStrings.continue1.tr().toUpperCase(),
                     style: const TextStyle(fontSize: 16.0),
                   ),

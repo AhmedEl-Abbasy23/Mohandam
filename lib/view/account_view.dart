@@ -22,11 +22,9 @@ class AccountView extends StatefulWidget {
 class _AccountViewState extends State<AccountView> {
   final _auth = FirebaseAuth.instance;
 
-  final CollectionReference _userData =
-      FirebaseFirestore.instance.collection('users');
+  final CollectionReference _userData = FirebaseFirestore.instance.collection('users');
   final User? _currentUser = FirebaseAuth.instance.currentUser;
-  final String _appLogoUrl =
-      'https://firebasestorage.googleapis.com/v0/b/handmade-49991.appspot.com/o/mohandam_logo.jpg?alt=media&token=15f1d4be-0af1-47f1-b66f-a5b4d0ed903f';
+  final String _appLogoUrl = 'https://firebasestorage.googleapis.com/v0/b/handmade-49991.appspot.com/o/mohandam_logo.jpg?alt=media&token=15f1d4be-0af1-47f1-b66f-a5b4d0ed903f';
 
   @override
   Widget build(BuildContext context) {
@@ -41,30 +39,18 @@ class _AccountViewState extends State<AccountView> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 2.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
                   margin: const EdgeInsets.symmetric(vertical: 10.0),
                   height: 180.0,
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: const Color(0x10096f77),
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
+                  decoration: BoxDecoration(color: const Color(0x10096f77), borderRadius: BorderRadius.circular(20.0),),
                   child: Row(
                     children: [
                       Expanded(
                         flex: 2,
-                        child: CircleAvatar(
-                          backgroundColor: const Color(0xff096f77),
-                          radius: 68.0,
-                          child: CircleAvatar(
-                            radius: 65.0,
-                            backgroundImage: snapshot.data!.get('imgUrl') != ''
-                                ? NetworkImage(snapshot.data!.get('imgUrl'))
-                                : NetworkImage(_appLogoUrl),
-                          ),
-                        ),
-                      ),
+                        child: CircleAvatar(backgroundColor: const Color(0xff096f77), radius: 68.0,
+                          child: CircleAvatar(radius: 65.0, backgroundImage: snapshot.data!.get('imgUrl') != '' ? NetworkImage(snapshot.data!.get('imgUrl'))
+                              : NetworkImage(_appLogoUrl),),),),
                       // name & email
                       Expanded(
                         flex: 3,
@@ -74,31 +60,10 @@ class _AccountViewState extends State<AccountView> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                snapshot.data!.get('name'),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20.0,
-                                ),
-                              ),
+                              Text(snapshot.data!.get('name'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0,), ),
                               const SizedBox(height: 5.0),
-                              Text(
-                                snapshot.data!.get('email'),
-                                // 'ahmed.elabbasy23@gmail.com',
-                                style: const TextStyle(
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
+                              Text(snapshot.data!.get('email'), style: const TextStyle(fontSize: 16.0,),),],),),),],),);
+              } else { return const Center(child: CircularProgressIndicator());}
             },
           ),
           Padding(
@@ -108,34 +73,25 @@ class _AccountViewState extends State<AccountView> {
                 _getListTile(
                   leadingImg: 'assets/icons/edit_profile_ic.svg',
                   title: AppStrings.editProfile.tr(),
-                  onTap: () {
-                    navigatePush(context, const EditProfile());
-                  },
+                  onTap: () { navigatePush(context, const EditProfile()); },
                 ),
                 const Divider(),
                 _getListTile(
                   leadingImg: 'assets/icons/favorites_ic2.svg',
                   title: AppStrings.favorites.tr(),
-                  onTap: () {
-                    navigatePush(context, const FavoritesView());
-                  },
+                  onTap: () { navigatePush(context, const FavoritesView()); },
                 ),
                 const Divider(),
                 _getListTile(
                   leadingImg: 'assets/icons/orders_ic.svg',
                   title: AppStrings.listings.tr(),
-                  onTap: () {
-                    navigatePush(context, ListingsView());
-                  },
+                  onTap: () { navigatePush(context, ListingsView()); },
                 ),
                 const Divider(),
                 _getListTile(
                   leadingImg: 'assets/icons/language_ic.svg',
                   title: AppStrings.changeLanguage.tr(),
-                  onTap: () {
-                    MyLocalization.changeLanguage(context);
-                    // CacheHelper.saveData(key: 'lang', value: translator.activeLanguageCode);
-                  },
+                  onTap: () { MyLocalization.changeLanguage(context); },
                 ),
                 const Divider(),
                 _getListTile(
@@ -154,7 +110,6 @@ class _AccountViewState extends State<AccountView> {
       ),
     );
   }
-
   Widget _getListTile(
       {required String leadingImg,
       required String title,
@@ -163,24 +118,10 @@ class _AccountViewState extends State<AccountView> {
       minLeadingWidth: 30.0,
       leading: Container(
         color: const Color(0x1f096f77),
-        child: SvgPicture.asset(
-          leadingImg,
-          fit: BoxFit.cover,
-          height: 22.0,
-          width: 22.0,
-        ),
-      ),
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 17.0,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+        child: SvgPicture.asset(leadingImg, fit: BoxFit.cover, height: 22.0, width: 22.0,),),
+      title: Text(title, style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600,),),
       trailing: const Icon(Icons.arrow_forward_ios),
-      onTap: () {
-        onTap();
-      },
+      onTap: () { onTap(); },
     );
   }
 }

@@ -34,21 +34,8 @@ class _MainViewState extends State<MainView> {
         elevation: 0.0,
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: _currentIndex != 2
-            ? GestureDetector(
-                onTap: () {
-                  // navigatePush(context, SearchView(_searchValue));
-                },
-                child: Container(
-                  width: 300.0,
-                  height: 60.0,
-                  color: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child: _textFieldWidget(),
-                ),
-              )
-            : null,
-      ),
+        title: _currentIndex != 2 ? Container(width: 300.0, height: 60.0, color: Colors.white, padding: const EdgeInsets.symmetric(vertical: 5.0),
+              child: _textFieldWidget()) : null),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         showUnselectedLabels: false,
@@ -64,85 +51,32 @@ class _MainViewState extends State<MainView> {
         items: [
           BottomNavigationBarItem(
             icon: _currentIndex == 0
-                ?  Text(
-                    AppStrings.explore.tr(),
-                    textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-                  )
-                : SvgPicture.asset(
-                    'assets/icons/explore_ic.svg',
-                    fit: BoxFit.cover,
-                    height: 22.0,
-                    width: 22.0,
-                  ),
-            label: '',
-          ),
+                ? Text(AppStrings.explore.tr(), textAlign: TextAlign.center, style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold,),)
+                : SvgPicture.asset('assets/icons/explore_ic.svg', fit: BoxFit.cover, height: 22.0, width: 22.0,), label: '',),
           BottomNavigationBarItem(
             icon: _currentIndex == 1
-                ?  Text(
-              AppStrings.cart.tr(),
-                    textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-                  )
-                : SvgPicture.asset(
-                    'assets/icons/cart_ic.svg',
-                    fit: BoxFit.cover,
-                    height: 22.0,
-                    width: 22.0,
-                  ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: _currentIndex == 2
-                ?  Text(
-              AppStrings.account.tr(),
-                    textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-                  )
-                : SvgPicture.asset(
-                    'assets/icons/user_ic.svg',
-                    fit: BoxFit.cover,
-                    height: 22.0,
-                    width: 22.0,
-                  ),
-            label: '',
-          ),
+                ? Text(AppStrings.cart.tr(), textAlign: TextAlign.center, style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold,),)
+                : SvgPicture.asset('assets/icons/cart_ic.svg', fit: BoxFit.cover, height: 22.0, width: 22.0,), label: '',),
+          BottomNavigationBarItem(icon: _currentIndex == 2
+                ? Text(AppStrings.account.tr(), textAlign: TextAlign.center, style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold,),)
+                : SvgPicture.asset('assets/icons/user_ic.svg', fit: BoxFit.cover, height: 22.0, width: 22.0,), label: '',),
         ],
       ),
       floatingActionButton: _currentIndex == 0
           ? FloatingActionButton.extended(
               icon: const Icon(Icons.sell),
                   label: Text(AppStrings.sell.tr(),style: const TextStyle(fontSize: 18.0),),
-
-              // child: Image.asset('assets/icons/sell_product_ic.png'),
               onPressed: () {
                 navigatePush(context, const SellProductView());
               },
-              backgroundColor: MyColors.primary,
-              elevation: 3.0,
-            )
-          : null,
-    );
-  }
-
+              backgroundColor: MyColors.primary, elevation: 3.0,
+            ) : null,
+    );}
   Widget _textFieldWidget() {
     return TextField(
-      onChanged: (String? value) {
-        navigatePush(context, SearchView(value));
-      },
+      onChanged: (String? value) {navigatePush(context, SearchView(value));},
       cursorColor: const Color(0xff096f77),
-      style: const TextStyle(
-        fontSize: 12.0,
-      ),
+      style: const TextStyle(fontSize: 12.0,),
       decoration: InputDecoration(
         fillColor: Colors.grey.shade200,
         filled: true,

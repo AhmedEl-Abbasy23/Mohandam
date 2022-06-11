@@ -17,14 +17,8 @@ class FavoritesView extends StatefulWidget {
 }
 
 class _FavoritesViewState extends State<FavoritesView> {
+
   final _productsData = FirebaseFirestore.instance.collection('products');
-
-  _addAndRemoveFavorites(String productId, bool inFavorite) async {
-    await _productsData.doc(productId).update({
-      'inFavorite': !inFavorite,
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,20 +44,17 @@ class _FavoritesViewState extends State<FavoritesView> {
       // recommended section
       body: StreamBuilder<QuerySnapshot?>(
         stream: _productsData.where('inFavorite', isEqualTo: true).snapshots(),
-        builder:
-            (BuildContext context, AsyncSnapshot<QuerySnapshot?> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot?> snapshot) {
           if (snapshot.hasData) {
             return SingleChildScrollView(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+              padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12.0),
                     child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 8.0,
                         mainAxisSpacing: 8.0,
@@ -76,43 +67,22 @@ class _FavoritesViewState extends State<FavoritesView> {
                         // product item
                         return InkWell(
                           onTap: () {
-                            // navigate to product details screen.
-                            navigatePush(context, ProductDetailsView(
+                            navigatePush(context, ProductDetailsView( // navigate to product details screen.
                               productId: snapshot.data!.docs[index].id,
-                              productImages: snapshot.data!.docs[index]
-                              ['images'],
-                              productDescription: snapshot.data!.docs[index]
-                              ['description'],
-                              productPrice: snapshot.data!.docs[index]
-                              ['price'],
-                              productTitle: snapshot.data!.docs[index]
-                              ['title'],
-                              productInFavorite: snapshot.data!.docs[index]
-                              ['inFavorite'],
-                              productQuantity: snapshot.data!.docs[index]
-                              ['quantity'],
-                            ));
-                          },
+                              productImages: snapshot.data!.docs[index]['images'],
+                              productDescription: snapshot.data!.docs[index]['description'],
+                              productPrice: snapshot.data!.docs[index]['price'],
+                              productTitle: snapshot.data!.docs[index]['title'],
+                              productInFavorite: snapshot.data!.docs[index]['inFavorite'],
+                              productQuantity: snapshot.data!.docs[index]['quantity'], )); },
                           child: Hero(
                             tag: snapshot.data!.docs[index].id,
                             child: ProductItem(
                               imgUrl: snapshot.data!.docs[index]['images'][0],
                               title: snapshot.data!.docs[index]['title'],
                               description: snapshot.data!.docs[index]['description'],
-                              price: snapshot.data!.docs[index]['price'],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return const Center(
-                child: CircularProgressIndicator(color: MyColors.primary));
-          }
+                              price: snapshot.data!.docs[index]['price'] ,),),);},),),],),);
+          } else { return const Center(child: CircularProgressIndicator(color: MyColors.primary)); }
         },
       ),
     );

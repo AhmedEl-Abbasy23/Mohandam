@@ -8,7 +8,6 @@ import 'package:handmade_store/shared/functions.dart';
 import 'package:handmade_store/view/login_view.dart';
 import 'package:handmade_store/view/main_view.dart';
 import 'package:lottie/lottie.dart';
-
 import 'onboarding_view.dart';
 
 class SplashView extends StatefulWidget {

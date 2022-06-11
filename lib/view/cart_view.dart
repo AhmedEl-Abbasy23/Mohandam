@@ -43,6 +43,7 @@ class _CartViewState extends State<CartView> {
   }
 
   List<int> price = [];
+  int _currentCount = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +123,9 @@ class _CartViewState extends State<CartView> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    '0 ${AppStrings.egp.tr()}', // todo solve it.
+                                    snapshot.data!.docs.isNotEmpty ?
+                                    '${snapshot.data!.docs[0]['price'] * _currentCount} ${AppStrings.egp.tr()}':
+                                    '0 ${AppStrings.egp.tr()}',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.0,
@@ -133,17 +136,11 @@ class _CartViewState extends State<CartView> {
                               ],
                             ),
                             StreamBuilder<DocumentSnapshot>(
-                                stream: _userData
-                                    .doc(_currentUser!.uid)
-                                    .snapshots(),
+                                stream: _userData.doc(_currentUser!.uid).snapshots(),
                                 builder: (context, userSnapshot) {
                                   return SizedBox(
-                                    height: 50.0,
-                                    width: 150.0,
-                                    child: ElevatedButton(
-                                      onPressed: userSnapshot
-                                                      .data!['mobileNumber'] ==
-                                                  '' ||
+                                    height: 50.0, width: 150.0,
+                                    child: ElevatedButton(onPressed: userSnapshot.data!['mobileNumber'] == '' ||
                                               userSnapshot.data![
                                                       'shippingAddress'] ==
                                                   ''
@@ -232,9 +229,7 @@ class _CartViewState extends State<CartView> {
         'orderType': 'Orders',
         'orderTime': dateString,
         'totalPrice': productPrice,
-        // todo replace with product total price
-        'orderQuantity': '',
-        // todo replace with product total quantity
+        'orderQuantity': _currentCount,
         'customerUid': _currentUser!.uid,
         'customerName': customerName,
         'customerPhone': customerPhone,
@@ -248,3 +243,5 @@ class _CartViewState extends State<CartView> {
     });
   }
 }
+// todo replace with product total price
+// todo replace with product total quantity
